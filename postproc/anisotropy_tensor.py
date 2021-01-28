@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: B. Font Garcia
-@description: Module to compute the normalized anisotropy and its non-zero invariants (II, III or eta, xi) from the Reynolds stresses tensor
+@description: Module to compute the normalized anisotropy and its non-zero invariants (II, III or eta, xi) from
+the Reynolds stresses tensor
 @contact: b.fontgarcia@soton.ac.uk
 """
 
