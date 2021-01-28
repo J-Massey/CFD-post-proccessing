@@ -33,11 +33,17 @@ To install this package in your workstation you only need ``git`` and ``pip3``. 
 This will install the `postproc` package at you `python3`  libraries folder (probably `/usr/lib/python3/dist-packages`). In order to be able to perform modification on the package without the need of reinstalling the `-e` (editable) argument is used. This provides the source path of the package to the installed library so any modifications on the source code (the folder you have downloaded and installed from) is immediately available with no need to re-install.
 
 Be careful as this won't necessarily install the package in the correct place. Use:
-	`which python`
+
+	which python3
+	
 To find the source directory of your python executable. Then run:
-	```sudo /path/to/python3 -m pip install -e . ```
+
+	sudo /path/to/python3 -m pip install -e . 
+	
 And this should allow you to execute the post processing script with the the python interpreter you normall use for example:
-	```python3 post_DNS.py```
+
+	python3 post_DNS.py
+	
 For when I run my DNS post processing script.
 
 
