@@ -252,7 +252,7 @@ def unpack3Dforces(file, D=1, U=1):
     return tD*D/U, fx, fy
 
 
-def unpackNewForces(file, names):
+def unpack_flex_forces(file, names):
     """
     Unpacks ASCII files containing columns of user defined parameters. This allows the testing of new functions in
     the body module and flexibility in what is printed to your 'fort.9' file
@@ -260,13 +260,13 @@ def unpackNewForces(file, names):
     :param names: dtype=list The names of the parameters you've decided to write in the simulation
     :return: New arrays assigned to your names
     """
-    names = np.loadtxt(file, unpack=True) # Could add ValueError about names not matching those defined
+    names = np.loadtxt(file, unpack=True)  # Could add ValueError about names not matching those defined
     return names
 
 
 def unpackProfiles(direc, n, l, theta):
     """
-    Unpacks the profiles printed from the uMod printed to a separate directory. The profiles are printed using the %at
+    Unpacks the profiles printed from the uMod all_profiles function. The profiles are printed using the %at
     function which takes a kernel average of radial support epsilon to the point it is evaluated on. The resolution
     determines how many times the at function is called and the length is a guess of the distance to the free-stream.
     :param direc: Directory containing the profiles
@@ -275,7 +275,15 @@ def unpackProfiles(direc, n, l, theta):
     :param theta: Angle from 0-pi the profile is evaluated
     :return: Time series of profiles at angles
     """
-    return 'fuck off'
+    import os
+    print(os.listdir(direc))
+
+    # dat = np.genfromtxt(direc)
+
+    # for i in range(dat.shape[0]):
+    #     plt.plot(dat[i,:],np.linspace(0,l,n))
+    # plt.show()
+    return np.sort(os.listdir(direc))
 
 
 def unpackTimeSeries(file, npoints):

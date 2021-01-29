@@ -19,7 +19,7 @@ plt.rc('text', usetex=True )
 plt.rc('font',family = 'sans-serif',  size=16) # use 13(JFM) or 16(SNH)
 mpl.rc('xtick', labelsize=16)
 mpl.rc('ytick', labelsize=16)
-mpl.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}'] #for \text command
+mpl.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']  # for \text command
 plt.rcParams['animation.ffmpeg_path'] = r"/usr/bin/ffmpeg"
 mpl.rcParams['axes.linewidth'] = 0.5
 
@@ -1592,6 +1592,8 @@ def plotXYSpatial_list(file, y_tuple_list, **kwargs):
 def velocity_profiles(file, profiles_tuple_list, **kwargs):
 	"""
 	Similar to plotXYSpatial_list just for a specific test case
+	:param file: output file name
+	:param profiles_tuple_list: list of tuples of format(u,y)
 	"""
 	ax = plt.gca()
 	fig  = plt.gcf()
@@ -1892,7 +1894,7 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
 
 def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
 	"""
-	Same as 'plotLogLogTimeSpectra_list' but the spectras are separated a factor of 10 among them for visualization purposes
+	Same as 'plotLogLogTimeSpectra_list' but the spectra are separated a factor of 10 among them for visualization purposes
 	"""
 	ax = plt.gca()
 	fig  = plt.gcf()
