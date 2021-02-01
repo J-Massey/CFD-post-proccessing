@@ -264,7 +264,7 @@ def unpack_flex_forces(file, names):
     return names
 
 
-def unpackProfiles(direc, n, l, theta):
+def unpack_profiles(direc, n, l, theta):
     """
     Unpacks the profiles printed from the uMod all_profiles function. The profiles are printed using the %at
     function which takes a kernel average of radial support epsilon to the point it is evaluated on. The resolution
@@ -276,14 +276,20 @@ def unpackProfiles(direc, n, l, theta):
     :return: Time series of profiles at angles
     """
     import os
-    print(os.listdir(direc))
+    import pandas as pd
+    files = np.sort(os.listdir(direc))
 
-    # dat = np.genfromtxt(direc)
+    for fname in enumerate(files):
+        print(fname[0])
+        profile = pd.DataFrame()
+        dat = np.genfromtxt(direc+fname)
+        # for loop1 in dat:
+        #     profiles[fname]
 
     # for i in range(dat.shape[0]):
     #     plt.plot(dat[i,:],np.linspace(0,l,n))
     # plt.show()
-    return np.sort(os.listdir(direc))
+    return 5
 
 
 def unpackTimeSeries(file, npoints):

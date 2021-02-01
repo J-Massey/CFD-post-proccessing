@@ -35,6 +35,59 @@ markers = ['|', 's', '^', 'v', 'x', 'o', '*']
 
 # Functions
 # ------------------------------------------------------
+
+def plot_history(f, t, label, file, **kwargs):
+	"""
+	Plot the history for the parameters printed to fort.9
+	:param f: Force [numpy 1D array]
+	:param t: Time [numpy 1D array]
+	:param file: output file name [string]
+	:param kwargs: Select which additional information you want to include in the plot: 'St', 'CL_rms', 'CD_rms', 'n_periods',
+		passing the corresponding values. E.g. 'St=0.2'.
+	:return: -
+	"""
+	ax = plt.gca()
+	fig = plt.gcf()
+
+	# Show lines
+	plt.plot(t, f, color='blue', lw=1, label=r'$3\mathrm{D}\,\, \mathrm{total}$')
+
+	# Set limits
+	ax.set_xlim(min(t), max(t))
+	ax.set_ylim(1.3*min(f), 1.3*max(f))
+
+	# Edit frame, labels and legend
+	ax.axhline(linewidth=1)
+	ax.axvline(linewidth=1)
+	plt.xlabel(r'$t/D$')
+	plt.ylabel(label)
+	# leg = plt.legend(loc='upper right')
+	# leg.get_frame().set_edgecolor('black')
+
+	# Anotations
+	for key, value in kwargs.items():
+		if key=='St':
+			St_str = '{:.2f}'.format(value)
+			my_str = r'$S_t='+St_str+'$'
+			plt.text(x=1.02*max(t), y=1.4*max(f), s=my_str, color='black')
+		if key=='CL_rms':
+			CL_rms_str = '{:.2f}'.format(value)
+			my_str = r'$\overline{C}_L='+CL_rms_str+'$'
+			plt.text(x=1.02*max(t), y=1.2*max(f), s=my_str, color='black')
+		if key=='CD_rms':
+			CD_rms_str = '{:.2f}'.format(value)
+			my_str = r'$\overline{C}_D='+CD_rms_str+'$'
+			plt.text(x=1.02*max(t), y=1.0*max(f), s=my_str, color='black')
+		if key=='n_periods':
+			n_periods = str(value)
+			my_str = r'$\textrm{periods}='+n_periods+'$'
+			plt.text(x=1.02*max(t), y=0.8*max(f), s=my_str, color='black')
+
+	# Show plot and save figure
+	plt.savefig(file, transparent=True, bbox_inches='tight')
+	return
+
+
 def plot_2D(u, file='test.pdf', **kwargs):
 	"""
 	Return nothing and saves the figure in the specified file name.
@@ -1044,7 +1097,7 @@ def plotCL(fy, t, file, **kwargs):
 	# Set limits
 	ax.set_xlim(min(t), max(t))
 	# ax.set_ylim(1.5*min(fy), 1.5*max(fy))
-	ax.set_ylim(-2.5, 2.5)
+	# ax.set_ylim(-2.5, 2.5)
 
 	# Edit frame, labels and legend
 	ax.axhline(linewidth=1)
