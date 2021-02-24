@@ -8,7 +8,7 @@ with open('LICENSE.txt') as f:
 
 setup(
     name='postproc',
-    version='0.1.1',
+    version='0.1.2',
     description='My PhD post-processing tools',
     long_description=readme,
     author='Bernat Font Garcia',
@@ -18,5 +18,5 @@ setup(
     license=legal,
     packages=find_packages(exclude=('tests', 'docs')),
     setup_requires=['numpy'],
-    install_requires=['numpy', 'scipy', 'matplotlib']
+    install_requires=['numpy', 'scipy', 'matplotlib', 'torch']
 )

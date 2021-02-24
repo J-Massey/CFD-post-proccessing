@@ -264,34 +264,6 @@ def unpack_flex_forces(file, names):
     return names
 
 
-def unpack_profiles(direc, n, l, theta):
-    """
-    Unpacks the profiles printed from the uMod all_profiles function. The profiles are printed using the %at
-    function which takes a kernel average of radial support epsilon to the point it is evaluated on. The resolution
-    determines how many times the at function is called and the length is a guess of the distance to the free-stream.
-    :param direc: Directory containing the profiles
-    :param n: Number of points in profile
-    :param l: Distance the profile is evaluated over
-    :param theta: Angle from 0-pi the profile is evaluated
-    :return: Time series of profiles at angles
-    """
-    import os
-    import pandas as pd
-    files = np.sort(os.listdir(direc))
-
-    for fname in enumerate(files):
-        print(fname[0])
-        profile = pd.DataFrame()
-        dat = np.genfromtxt(direc+fname)
-        # for loop1 in dat:
-        #     profiles[fname]
-
-    # for i in range(dat.shape[0]):
-    #     plt.plot(dat[i,:],np.linspace(0,l,n))
-    # plt.show()
-    return 5
-
-
 def unpackTimeSeries(file, npoints):
     """
     Unpacks ASCII files containing the following columns: non-dimensional time, point1, point2, ...
@@ -363,7 +335,7 @@ def read_vtr(fname):
     reader.Update()
     data = reader.GetOutput()
     pointData = data.GetPointData()
-
+    print('done')
     sh = data.GetDimensions()[::-1]
     ndims = len(sh)
 
