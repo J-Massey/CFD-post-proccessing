@@ -260,7 +260,10 @@ def unpack_flex_forces(file, names):
     :param names: dtype=list The names of the parameters you've decided to write in the simulation
     :return: New arrays assigned to your names
     """
-    names = np.loadtxt(file, unpack=True)  # Could add ValueError about names not matching those defined
+    try:
+        names = np.loadtxt(file, unpack=True)
+    except IndexError:
+        print("Get the number of entries right you fucking mug")
     return names
 
 

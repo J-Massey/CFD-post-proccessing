@@ -6,3 +6,5 @@ pandas
 setuptools
 scikit-learn
 torch
+postproc
+seaborn

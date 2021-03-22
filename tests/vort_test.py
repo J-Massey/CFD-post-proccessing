@@ -27,7 +27,7 @@ file = 'sample_data/2D_Re100.dat' # File containig velocity field
 
 shape = (N, M)
 u, v = io.read_data(file=file, shape=shape, ncomponents=2)
-vort = averages.vortz(u, v)
-plotter.plot2D(vort, cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], y=[ymin,ymax])
+vort = averages.vortZ(u, v)
+plotter.plot_2D(vort, cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], y=[ymin,ymax])
 
 

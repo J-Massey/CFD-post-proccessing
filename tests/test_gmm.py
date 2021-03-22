@@ -54,7 +54,7 @@ def test_em_matches_sklearn():
 
     pi, mu, var = model._m_step(x, log_prob)
 
-    # Test whether pi ..
+    # Test whether pie ..
     np.testing.assert_almost_equal(np.squeeze(pi.data.numpy()),
                                    pi_sk,
                                    decimal=1,

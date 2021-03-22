@@ -101,7 +101,7 @@ def make_periodicZ(u, **kwargs): # Methods t = True (add layer), t = False (subs
 
 def make_periodic(a, axis):
 	b = np.expand_dims(np.take(a, indices=0, axis=axis), axis=axis)
-	return  np.concatenate((a, b), axis=axis)
+	return np.concatenate((a, b), axis=axis)
 
 
 def decomp_z(u):

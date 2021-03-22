@@ -14,6 +14,8 @@ import matplotlib.patches as patches
 import matplotlib.colorbar as colorbar
 import matplotlib.animation as animation
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import seaborn as sns
+colors = sns.color_palette("husl", 14)
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='sans-serif', size=16)  # use 13(JFM) or 16(SNH)
@@ -25,10 +27,10 @@ mpl.rcParams['axes.linewidth'] = 0.5
 
 # plt.switch_backend('AGG') #png
 # plt.switch_backend('PS')
-plt.switch_backend('PDF')  # pdf
-# plt.switch_backend('PS')
+# plt.switch_backend('PDF')  # pdf
+plt.switch_backend('TkAgg')  # GUI
 
-colors = ['black', 'orange', 'cyan', 'green', 'blue', 'red', 'magenta', 'yellow']
+# colors = ['black', 'orange', 'cyan', 'green', 'blue', 'red', 'magenta', 'yellow']
 # colors = ['orange', 'cyan', 'green', 'blue', 'red', 'magenta', 'yellow']
 markers = ['|', 's', '^', 'v', 'x', 'o', '*']
 
@@ -90,6 +92,66 @@ def plot_history(f, t, label, file, title, **kwargs):
 
     # Show plot and save figure
     plt.savefig(file, transparent=False, bbox_inches='tight')
+    return
+
+
+def fully_defined_plot(x, y, file, x_label, y_label, title=None,
+                       colour='black', colours=None, l_label=None, marker=None,
+                       xlim=None, ylim=None):
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.set_title(title)
+
+    ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
+
+    # Edit frame, labels and legend
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if xlim is not None: ax.set_xlim(xlim)
+    if ylim is not None: ax.set_ylim(ylim)
+
+    # Make legend manually
+    if l_label and colours is not None:
+        from matplotlib.lines import Line2D
+        legend_elements = []
+        for idx, loop in enumerate(l_label):
+            legend_elements.append(Line2D([0], [0], color=colours[idx], lw=4, label=loop))
+        ax.legend(handles=legend_elements, loc='lower right')
+
+    ax.plot(x, y, color=colour, marker=marker)
+    plt.savefig(file, bbox_inches='tight', transparent=False)
+    return
+
+
+def domain_test_plot(means, var, file, y_label, title=None, doms=None):
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(10,3))
+    ax.set_title(title)
+
+    n = np.arange(0, len(doms), 1)
+
+    ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
+
+    # Edit frame, labels and legend
+    ax.set_ylabel(y_label)
+    ax.set_xlabel("Domain size")
+
+    ax.set_xticks(n)
+    ax.set_xticklabels(doms)
+    ax.fill_between(n, 0.95 * means[-1], 1.05 * means[-1], alpha=0.5, color='C1')
+
+    # Make legend manually
+    # if l_label and colours is not None:
+    from matplotlib.lines import Line2D
+    legend_elements = [(Line2D([0], [0], color='C1', alpha=0.5, lw=4, label='$\pm 5 \% $ confidence interval'))]
+    ax.legend(handles=legend_elements, loc='lower right')
+
+    ax.scatter(n, means, color='k', marker='*')
+    ax.errorbar(n, means, yerr=var, capsize=12)
+    for idx, lab in enumerate(doms):
+        ax.annotate(f'$\sigma^2 = {var[idx]:.3e}$', (n[idx], means[idx]))
+
+    plt.savefig(file, bbox_inches='tight', transparent=False)
     return
 
 
@@ -736,7 +798,7 @@ def two_point_correlations_single(a, fname):
         for j, t in enumerate(b[1]):
             case_name, c, d = t[0], t[1], t[2]
             d[0] = 0.011111
-            if 'pi' in case_name:
+            if 'pie' in case_name:
                 case_name = '\pi'
                 max_d = np.max(d)
             ax.plot(d, c, color=colors[j], lw=1.5, label='$' + case_name + '$', marker=markers[j], markevery=0.05,
@@ -783,7 +845,7 @@ def two_point_correlations(a, fname):
         for j, t in enumerate(b[1]):
             case_name, c, d = t[0], t[1], t[2]
             d[0] = 0.011111
-            if 'pi' in case_name:
+            if 'pie' in case_name:
                 case_name = '\pi'
                 max_d = np.max(d)
             ax[i].plot(d, c, color=colors[j], lw=1, label='$' + case_name + '$')
@@ -839,7 +901,7 @@ def two_point_correlations_3_horizontal(a, fname):
         for j, t in enumerate(b[1]):
             case_name, c, d = t[0], t[1], t[2]
             d[0] = 0.011111
-            if 'pi' in case_name:
+            if 'pie' in case_name:
                 case_name = '\pi'
                 max_d = np.max(d)
             every = [4, 2, 2, 1, 1]
@@ -893,7 +955,7 @@ def two_point_correlations_3_vertical(a, fname):
         for j, t in enumerate(b[1]):
             case_name, c, d = t[0], t[1], t[2]
             d[0] = 0.011111
-            if 'pi' in case_name:
+            if 'pie' in case_name:
                 case_name = '\pi'
                 max_d = np.max(d)
             every = [4, 2, 2, 1, 1]
@@ -975,7 +1037,7 @@ def CL_CD_theta(fy, fx, t, alphas, times, fname):
     # ax3.set_ylabel(r'$\theta_l+\theta_u$') #labelpad=-3 for 0.5
     # ax3.set_ylim(-24,24) #0.5
     # ax3.set_xlim(-1.8,1.8)
-    # ax3.set_ylim(-9,9) #pi
+    # ax3.set_ylim(-9,9) #pie
     # ax3.set_xlim(-0.8,0.8)
 
     leg1 = ax1.legend(loc='lower left')
@@ -1067,8 +1129,8 @@ def CL_CD_theta_2(fy, fx, t, alphas, times, fname):
     ax3.set_ylabel(r'$\theta_l+\theta_u$')  # labelpad=-3 for 0.5
     ax3.set_ylim(-24, 24)  # 0.5
     ax3.set_xlim(-1.8, 1.8)  # 0.5
-    # ax3.set_ylim(-9,9) #pi
-    # ax3.set_xlim(-0.8,0.8) #pi
+    # ax3.set_ylim(-9,9) #pie
+    # ax3.set_xlim(-0.8,0.8) #pie
 
     leg1 = ax1.legend(loc='lower left')
     leg1.get_frame().set_edgecolor('black')
@@ -1090,12 +1152,14 @@ def CL_CD_theta_2(fy, fx, t, alphas, times, fname):
     return
 
 
-def plotCL(fy, t, file, **kwargs):
+def plotCL(fy, t, file, colour='red', label=None, **kwargs):
     """
 	Plot the lift force as a time series.
 	:param fy: Lift force [numpy 1D array]
 	:param t: Time [numpy 1D array]
 	:param file: output file name [string]
+	:param colour: colour...
+	:param label: label...
 	:param kwargs: Select which additional information you want to include in the plot: 'St', 'CL_rms', 'CD_rms', 'n_periods',
 		passing the corresponding values. E.g. 'St=0.2'.
 	:return: -
@@ -1104,7 +1168,7 @@ def plotCL(fy, t, file, **kwargs):
     fig = plt.gcf()
 
     # Show lines
-    plt.plot(t, fy, color='blue', lw=1, label=r'$3\mathrm{D}\,\, \mathrm{total}$')
+    plt.plot(t, fy, color=colour, lw=1, label=label)
 
     # Set limits
     ax.set_xlim(min(t), max(t))
@@ -1112,11 +1176,11 @@ def plotCL(fy, t, file, **kwargs):
     # ax.set_ylim(-2.5, 2.5)
 
     # Edit frame, labels and legend
-    ax.axhline(linewidth=1)
-    ax.axvline(linewidth=1)
+    # ax.axhline(linewidth=1)
+    # ax.axvline(linewidth=1)
     plt.xlabel(r'$t/D$')
     plt.ylabel(r'$C_L$')
-    # leg = plt.legend(loc='upper right')
+    leg = plt.legend(loc='upper right')
     # leg.get_frame().set_edgecolor('black')
 
     # Anotations
@@ -1222,7 +1286,7 @@ def plotTKEspatial_list(file, tke_tuple_list, **kwargs):
         if 'xD_min' in kwargs:
             x = x[x > kwargs['xD_min']]
             tke = tke[-x.size:]
-        if 'pi' in label:
+        if 'pie' in label:
             label = '\pi'
         label = '$' + label + '$'
         color = colors[i]
@@ -1679,7 +1743,7 @@ def velocity_profiles(file, profiles_tuple_list, **kwargs):
         profile = np.array(profile)[p]
         y = np.array(y)[p]
         label = '$' + label + '$'
-        if 'pi' in label:
+        if 'pie' in label:
             label = '$\pi$'
         color = colors[i]
         # plt.plot(profile, y, color=color, lw=1, label=label, marker=markers[i], markevery=10, markersize=4)
@@ -1858,8 +1922,8 @@ def plotLogLogSpatialSpectra_list(file, uk_tuple_list, wn_list):
     # plt.text(x=2e-2, y=4e2, s='$-11/3$', color='black')
 
     # Show plot and save figure
-    plt.show()
-    plt.savefig(file, transparent=True, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(file, transparent=False, bbox_inches='tight')
     return
 
 
@@ -1901,8 +1965,58 @@ def plotLogLogTimeSpectra(freqs, uk, file):
     plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black')
 
     # Show plot and save figure
-    plt.show()
-    plt.savefig(file, transparent=True, bbox_inches='tight')
+    plt.savefig(file, transparent=False, bbox_inches='tight')
+    return
+
+def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
+    """
+	Generate a loglog plot of a list of time spectra series
+	:param file: output file name
+	:param uk_tuple_list: list of tuples as (case, uk), where 'case' is the case name [string] and 'uk' is
+		power signal of the time series u [1D numpy array]
+	:param freqs_list: list containing the frequencies [1D numpy array] for each case
+	:return: -
+	"""
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(7, 5))
+    if title is not None: plt.title(title)
+    # Show lines
+    colors = sns.color_palette("husl", len(uk_tuple_list))
+    # colors = sns.color_palette("RdBu", len(uk_tuple_list))
+    for i, uk_tuple in enumerate(uk_tuple_list):
+        label = uk_tuple[0]
+        if 'pie' in label: label = '\pi'
+        uk = uk_tuple[1]
+        label = '$' + label + '$'
+        color = colors[i]
+        ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
+
+    # Set limits
+    # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
+    if xlim is not None: ax.set_xlim(xlim)  # Window
+    if ylim is not None: ax.set_ylim(ylim)  # Window
+
+    fig, ax = makeSquare(fig, ax)
+    # ax.xaxis.set_tick_params(labeltop='on')
+    ax.tick_params(bottom="on", top="on", which='both')
+
+    # Edit frame, labels and legend
+    plt.xlabel(r'$f/Uc$')
+    plt.ylabel(r'$SPS$')
+    leg = plt.legend(loc='upper right')
+    leg.get_frame().set_edgecolor('white')
+
+    # Anotations
+    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
+    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
+    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # No Power
+    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
+
+    # Show plot and save figure
+    # plt.show()
+    plt.savefig(file, transparent=False, bbox_inches='tight')
     return
 
 
@@ -1921,25 +2035,24 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
-        print(label)
-        if 'pi' in label: label = '\pi'
+        if 'pie' in label: label = '\pi'
         uk = uk_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
-        plt.loglog(freqs_list[i], uk, color=color, lw=0.5, label=label)
+        ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
 
-    x, y = loglogLine(p2=(1.e2, 1e-7), p1x=1e-2, m=-5 / 3)
-    plt.loglog(x, y, color='black', lw=1, ls='dotted')
-    x, y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
-    plt.loglog(x, y, color='black', lw=1, ls='dashdot')
+    # x, y = loglogLine(p2=(1.e2, 1e-7), p1x=1e-2, m=-5 / 3)
+    # plt.loglog(x, y, color='black', lw=1, ls='dotted')
+    # x, y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
+    # plt.loglog(x, y, color='black', lw=1, ls='dashdot')
     # x, y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
     # plt.loglog(x, y, color='black', lw=1, ls='dashed')
 
     # Set limits
     # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
     # ax.set_ylim(1e-8, 1e-1)
-    ax.set_xlim(1e-2, 1e2)  # Window
-    ax.set_ylim(1e-11, 1e-1)
+    # ax.set_xlim(1e-2, 1e2)  # Window
+    # ax.set_ylim(1e-11, 1e-1)
 
     fig, ax = makeSquare(fig, ax)
     # ax.xaxis.set_tick_params(labeltop='on')
@@ -1960,8 +2073,8 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
     # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
 
     # Show plot and save figure
-    plt.show()
-    plt.savefig(file, transparent=True, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(file, transparent=False, bbox_inches='tight')
     return
 
 
@@ -1980,7 +2093,7 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
         print(label)
-        if 'pi' in label: label = '\pi'
+        if 'pie' in label: label = '\pi'
         if '2D' in label or 'D9' in label: label = '2\mathrm{D}'
         uk = uk_tuple[1]
         label = '$' + label + '$'
@@ -2024,7 +2137,7 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
     # ax.xaxis.grid(True, which='major')
 
     # Show plot and save figure
-    plt.savefig(file, transparent=True, bbox_inches='tight')
+    plt.savefig(file, transparent=False, bbox_inches='tight')
     plt.clf()
     return
 
@@ -2044,7 +2157,7 @@ def plotLogLogSpatialSpectra_list_cascade(file, uk_tuple_list, freqs_list):
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
         print(label)
-        if 'pi' in label: label = '\pi'
+        if 'pie' in label: label = '\pi'
         if '2D' in label: label = '2\mathrm{D}'
         uk = uk_tuple[1]
         label = '$' + label + '$'
@@ -2074,7 +2187,7 @@ def plotLogLogSpatialSpectra_list_cascade(file, uk_tuple_list, freqs_list):
 
     # Show plot and save figure
     plt.show()
-    plt.savefig(file, transparent=True, bbox_inches='tight')
+    plt.savefig(file, transparent=False, bbox_inches='tight')
     return
 
 
@@ -2297,6 +2410,7 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
                 return r'$\frac{%s%s}{%s}$' % (num, latex, den)
 
     return _multiple_formatter
+
 
 # def plot_poincare(x, y, file, **kwargs):
 #     """
