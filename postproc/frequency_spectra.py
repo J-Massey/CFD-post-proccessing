@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-@author: B. Font Garcia
-@description: Module to compute the temporal spectra of a certain quantity.
-@contact: b.fontgarcia@soton.ac.uk
+@author: J. Massey
+@description: Module to determine the convergence of frequency spectra
+@contact: jmom1n15@soton.ac.uk
 """
 
 # Imports
 import numpy as np
 from scipy import signal
 from scipy.interpolate import interp1d
-
+from collections import deque
 
 # Functions
 def freq_spectra(t, u, **kwargs):
@@ -54,13 +54,16 @@ def freq_spectra(t, u, **kwargs):
 	# uk = np.fft.fft(u)/u.size
 	uk = (1 / (t_max - t_min)) * np.fft.fft(u)
 	# uk = (dt/u.size)*np.fft.fft(u)
-	uk = np.abs(uk) ** 2
+	uk = uk*np.conj(uk)
+	uk = uk.real
 	freqs = np.fft.fftfreq(uk.size, d=dt)
 
 	# Downsample averaging
 	if downsample > 0:
 		uk = _downsample_avg(uk, downsample)
 		freqs = _downsample_avg(freqs, downsample)
+		uk = uk[:-1]
+		freqs = freqs[:-1]
 
 	# Take only positive frequencies and return arrays
 	freqs = freqs[freqs > 0]
@@ -98,10 +101,180 @@ def freq_spectra_convergence(t, u, n=5, OL=0.5, **kwargs):
 	uk_partial_ol_list = deque(); freqs_partial_ol_list = deque()
 	means = deque(); variances = deque()
 	for idx, tup in enumerate(list(zip(t_partial_ol_list, u_partial_ol_list))):
-		freqs, uk = freq_spectra(tup[0], tup[1], resample=True, windowing=False, tukey_windowing=True, **kwargs)
+		freqs, uk = freq_spectra(tup[0], tup[1], resample=False, **kwargs)
 		means.append(np.mean(uk)); variances.append(np.var(uk))
 		freqs_partial_ol_list.append(freqs); uk_partial_ol_list.append((f"Bin {idx+1}", uk))
 	return list(uk_partial_ol_list), list(freqs_partial_ol_list), list(means), list(variances)
+
+def freq_spectra_ensembling(t, u, n, OL=0.5, **kwargs):
+	"""
+	This is a function that takes a hann window of signal at descrete intervals and returns the frequency spec
+	for each window, as well as the mean and var for these ffts. It then takes an ensembled average of these
+	windows to show the convergence of a spectra.
+	Args:
+		t: Time series
+		u: Signal Series
+		**kwargs:
+			resample: Boolean to resample the signal evenly spaced in time.
+			lowpass: Boolean to apply a low-pass filter to the transformed signal.
+			windowing: Boolean to apply a windowing function to the temporal signal.
+			downsample: Integer (where 0=False) for the number of points to average on the downsampling procedure.
+	:return: uks: list of
+
+	Returns:
+			uks: n dimensional list of (label, uk) tuple where the label is the window
+			fs : n dimensional list of frequencies
+	"""
+
+	u = u - np.mean(u)
+	u_function = interp1d(t, u, kind='cubic')
+	t_min, t_max = np.min(t), np.max(t)
+	dt = (t_max - t_min) / len(t)
+	t = np.arange(t_min, t_max, dt)[:-1]  # Regularize t and Skip last because can be problematic if > than actual t_max
+	u = u_function(t)  # Regularize u
+
+	u_partial_ol_list = _split_overlap(u, n, OL)
+	t_partial_ol_list = _split_overlap(t, n, OL)
+
+	uk_ensemble_ol_list = deque(); freqs_ensemble_ol_list = deque()
+	tmp_uk = deque(); tmp_f = deque()
+	for idx, tup in enumerate(list(zip(t_partial_ol_list, u_partial_ol_list))):
+		freqs, uk = freq_spectra(tup[0], tup[1], resample=False, **kwargs)
+		tmp_uk.append(uk); tmp_f.append(freqs)
+		uk_ensemble_ol_list.append((f"Window ${idx+1}$", np.average(np.array(tmp_uk), axis=0)))
+		freqs_ensemble_ol_list.append(np.average(np.array(tmp_f), axis=0))
+	return list(uk_ensemble_ol_list), list(freqs_ensemble_ol_list)
+
+
+class FreqConv:
+	"""
+	This is a class that holds functions to determine the convergence of a time series using the ensembled freq
+	spectra.
+	"""
+	def __init__(self, t, u, n, OL=0.5):
+		self.t = t
+		self.u = u
+		self.n = n
+		self.OL = OL
+
+	def freq(self, **kwargs):
+		"""
+		Returns the FFT of u together with the associated frequency after resampling the signal evenly.
+		:param t: Time series.
+		:param u: Signal series.
+		:param kwargs:
+			resample: Boolean to resample the signal evenly spaced in time.
+			lowpass: Boolean to apply a low-pass filter to the transformed signal.
+			windowing: Boolean to apply a windowing function to the temporal signal.
+			downsample: Integer (where 0=False) for the number of points to average on the downsampling procedure.
+			expanding_windowing: Boolean that changes the output to a list of uk and freqs representing an expanding
+								window so that we can see convergence to a manifold
+		:return: freqs 1D array and uk 1D array.
+		"""
+		resample = kwargs.get('resample', True)
+		lowpass = kwargs.get('lowpass', False)
+		windowing = kwargs.get('windowing', True)
+		tukey_windowing = kwargs.get('tukey_windowing', False)
+		downsample = kwargs.get('downsample', False)
+
+		if tukey_windowing:
+			windowing = False
+			self.u = _tuk_window(self.u)
+		# Re-sample u on a evenly spaced time series (constant dt)
+		if resample:
+			self.u, self.t = self._resample()
+		else:
+			dt = self.t[1] - self.t[0]
+			t_min, t_max = np.min(self.t), np.max(self.t)
+
+		if windowing: self.u = _window(self.u)  # Windowing
+		if lowpass: self.u = _low_pass_filter(self.u)  # Signal filtering for high frequencies
+
+		# Compute power fft and associated frequencies
+		# uk = np.fft.fft(u)/u.size
+		uk = (1 / (t_max - t_min)) * np.fft.fft(self.u)
+		# uk = (dt/u.size)*np.fft.fft(u)
+		uk = uk * np.conj(uk)
+		uk = uk.real
+		freqs = np.fft.fftfreq(uk.size, d=dt)
+
+		# Downsample averaging
+		if downsample > 0:
+			uk = _downsample_avg(uk, downsample)
+			freqs = _downsample_avg(freqs, downsample)
+			uk = uk[:-1]
+			freqs = freqs[:-1]
+
+		# Take only positive frequencies and return arrays
+		freqs = freqs[freqs > 0]
+		uk = uk[:len(freqs)]
+		return freqs, uk
+
+	def ensemble(self, **kwargs):
+		"""
+		This is a function that takes a hann window of signal at descrete intervals and returns the frequency spec
+		for each window, as well as the mean and var for these ffts. It then takes an ensembled average of these
+		windows to show the convergence of a spectra.
+		Args:
+			t: Time series
+			u: Signal Series
+			**kwargs:
+				resample: Boolean to resample the signal evenly spaced in time.
+				lowpass: Boolean to apply a low-pass filter to the transformed signal.
+				windowing: Boolean to apply a windowing function to the temporal signal.
+				downsample: Integer (where 0=False) for the number of points to average on the downsampling procedure.
+		:return: uks: list of
+
+		Returns:
+				uks: n dimensional list of (label, uk) tuple where the label is the window
+				fs : n dimensional list of frequencies
+		"""
+
+		self.u, self.t = self._resample()
+
+		u_partial_ol_list = self._split_overlap(self.u)
+		t_partial_ol_list = self._split_overlap(self.t)
+
+		uk_ensemble_ol_list = deque(); freqs_ensemble_ol_list = deque()
+		tmp_uk = deque(); tmp_f = deque()
+		for idx, tup in enumerate(list(zip(t_partial_ol_list, u_partial_ol_list))):
+			freqs, uk = freq_spectra(tup[0], tup[1], resample=False, **kwargs)
+			tmp_uk.append(uk); tmp_f.append(freqs)
+			uk_ensemble_ol_list.append((f"Window ${idx+1}$", np.average(np.array(tmp_uk), axis=0)))
+			freqs_ensemble_ol_list.append(np.average(np.array(tmp_f), axis=0))
+		return list(uk_ensemble_ol_list), list(freqs_ensemble_ol_list)
+
+	def _resample(self):
+		"""
+		Regularise the time interval and fit cubic function to u.
+		Returns:
+			Resampled u,t
+		"""
+		self.u = self.u - np.mean(self.u)
+		u_function = interp1d(self.t, self.u, kind='cubic')
+		t_min, t_max = np.min(self.t), np.max(self.t)
+		dt = (t_max - t_min) / len(self.t)
+		t = np.arange(t_min, t_max, dt)[:-1]  # Regularize t and Skip last, can be problematic if > than t_max
+		u = u_function(t)  # Regularize u
+		return t, u
+
+	def _split_overlap(self, a):
+		"""
+		:param a: array to split and overlap.
+		:param n: number of splits of a.
+		:param OL: overlap.
+		:return: c, a list of the splits of a in function of n and OL
+		"""
+		splits_size = int(round(a.size / self.n))
+		nOL = int(round(splits_size * self.OL))
+		skip = splits_size - nOL
+		b = [a[i: i + splits_size] for i in range(0, len(a), skip)]
+		c = []
+		for i, item in enumerate(b):
+			if len(item) == splits_size:
+				c.append(item)
+		return c
+
 
 
 def freq_spectra_Welch(t, u, n=4, OL=0.5, **kwargs):
@@ -136,7 +309,7 @@ def freq_spectra_Welch(t, u, n=4, OL=0.5, **kwargs):
 	uk_partial_ol_list = []
 	freqs_partial_ol_list = []
 	for tup in list(zip(t_partial_ol_list, u_partial_ol_list)):
-		freqs, uk = freq_spectra(tup[0], tup[1], resample=True, downsample=False, **kwargs)
+		freqs, uk = freq_spectra(tup[0], tup[1], resample=False, **kwargs)
 		freqs_partial_ol_list.append(freqs)
 		uk_partial_ol_list.append(uk)
 	uk_mean = np.mean(uk_partial_ol_list, axis=0)

@@ -76,22 +76,13 @@ for idx in range(len(xs[0])):
         # plt.close()
 
         t=np.linspace(t_min,t_max,len(data))
-        n=8
 
         label = lambda t: f"$ {t_min} \leq t \leq {t} $"
         labels = [label(int(t)) for t in np.arange(t_min, t_max, t_max / n)]
 
-        fs, ts = postproc.frequency_spectra.freq_spectra_Welch(t, likelihood, n=n,
-                                                               windowing=False,
-                                                               expanding_windowing=True)
-        for w_idx, (f, t) in enumerate(zip(fs, ts)):
-            postproc.plotter.simple_plot(f, t,
-                                         y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/D $",
-                                         colour=colours[w_idx],
-                                         colours=colours[:len(fs)],
-                                         title=f"$ {round(angles[idx], 2)}^r $ from the front",
-                                         l_label=labels,
-                                         file=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
+        n = max(t) / 50
+        uks, fs, means, variances = postproc.frequency_spectra.freq_spectra_convergence(t, u, n=n, OL=0.5)
+
 
         # for loop in range(1,8):
         #     window = postproc.frequency_spectra._window(loop * t / n)

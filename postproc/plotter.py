@@ -1979,13 +1979,13 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
 	"""
     plt.style.use(['science', 'grid'])
     fig, ax = plt.subplots(figsize=(7, 5))
-    if title is not None: plt.title(title)
     # Show lines
     colors = sns.color_palette("husl", len(uk_tuple_list))
     # colors = sns.color_palette("RdBu", len(uk_tuple_list))
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
-        if 'pie' in label: label = '\pi'
+        if 'pie' in label:
+            label = '\pi'
         uk = uk_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
@@ -1993,6 +1993,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
 
     # Set limits
     # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
+    if title is not None: plt.title(title)
     if xlim is not None: ax.set_xlim(xlim)  # Window
     if ylim is not None: ax.set_ylim(ylim)  # Window
 
@@ -2020,7 +2021,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
     return
 
 
-def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
+def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
     """
 	Generate a loglog plot of a list of time spectra series
 	:param file: output file name
@@ -2029,8 +2030,9 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
 	:param freqs_list: list containing the frequencies [1D numpy array] for each case
 	:return: -
 	"""
-    ax = plt.gca()
-    fig = plt.gcf()
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(7, 5))
+    colors = sns.color_palette("RdBu", len(uk_tuple_list))
 
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
@@ -2040,13 +2042,16 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
         label = '$' + label + '$'
         color = colors[i]
         ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
-
+    ax.loglog()
     # x, y = loglogLine(p2=(1.e2, 1e-7), p1x=1e-2, m=-5 / 3)
     # plt.loglog(x, y, color='black', lw=1, ls='dotted')
     # x, y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
     # plt.loglog(x, y, color='black', lw=1, ls='dashdot')
     # x, y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
     # plt.loglog(x, y, color='black', lw=1, ls='dashed')
+    if title is not None: plt.title(title)
+    if xlim is not None: ax.set_xlim(xlim)  # Window
+    if ylim is not None: ax.set_ylim(ylim)  # Window
 
     # Set limits
     # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
@@ -2061,8 +2066,8 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
     # Edit frame, labels and legend
     plt.xlabel(r'$f/UD$')
     plt.ylabel(r'$SPS$')
-    leg = plt.legend(loc='upper right')
-    leg.get_frame().set_edgecolor('white')
+    # leg = plt.legend(loc='upper right')
+    # leg.get_frame().set_edgecolor('white')
 
     # Anotations
     # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
@@ -2078,12 +2083,15 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list):
     return
 
 
-def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
+def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
+                                       ylabel=r'$\mathrm{PS}\left(v\right)$', title=None):
     """
 	Same as 'plotLogLogTimeSpectra_list' but the spectra are separated a factor of 10 among them for visualization purposes
 	"""
-    ax = plt.gca()
-    fig = plt.gcf()
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(7, 5))
+    if title is not None: plt.title(title)
+    colors = sns.color_palette("husl", len(uk_tuple_list))
 
     for i, uk_tup in enumerate(uk_tuple_list):
         uk = uk_tup[1] * 10 ** (-i)
@@ -2092,7 +2100,6 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
-        print(label)
         if 'pie' in label: label = '\pi'
         if '2D' in label or 'D9' in label: label = '2\mathrm{D}'
         uk = uk_tuple[1]
@@ -2100,21 +2107,21 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
         color = colors[i]
         plt.loglog(freqs_list[i], uk, color=color, lw=0.5, label=label)
 
-    for i in np.arange(5):
-        x, y = loglogLine(p2=(1.e2, 1e-11 * 10 ** i), p1x=1e-2, m=-5 / 3)
-        # plt.loglog(x, y, color='black', lw=0.5, ls='dotted', alpha=0.3)
-        plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dotted')
-    for i in np.arange(2):
-        # x, y = loglogLine(p2=(1.2e2, 1e-16 * 100 ** i), p1x=1e-3, m=-3)
-        # plt.loglog(x, y, color='black', lw=0.5, ls='dashdot', alpha=0.3)
-        # plt.loglog(x, y, color='darkgrey', lw=0.2, ls='dashdot')
-        x, y = loglogLine(p2=(1.2e2, 1e-17 * 100 ** i), p1x=1e-2, m=-3.66)
-        # plt.loglog(x, y, color='black', lw=0.5, ls='dashed', alpha=0.3)
-        plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dashed')
+    # for i in np.arange(5):
+    #     x, y = loglogLine(p2=(1.e2, 1e-11 * 10 ** i), p1x=1e-2, m=-5 / 3)
+    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dotted', alpha=0.3)
+    #     plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dotted')
+    # for i in np.arange(2):
+    #     # x, y = loglogLine(p2=(1.2e2, 1e-16 * 100 ** i), p1x=1e-3, m=-3)
+    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dashdot', alpha=0.3)
+    #     # plt.loglog(x, y, color='darkgrey', lw=0.2, ls='dashdot')
+    #     x, y = loglogLine(p2=(1.2e2, 1e-17 * 100 ** i), p1x=1e-2, m=-3.66)
+    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dashed', alpha=0.3)
+    #     plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dashed')
 
     # Set limits
-    ax.set_xlim(1e-2, 7e1)  # Window
-    ax.set_ylim(9e-16, 1e-1)
+    # ax.set_xlim(1e-2, 7e1)  # Window
+    # ax.set_ylim(9e-16, 1e-1)
     # ax.set_ylim(1e-11, 1e4)
 
     fig, ax = makeSquare(fig, ax)
@@ -2122,12 +2129,12 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list):
     # Edit frame, labels and legend
     ax.tick_params(bottom="on", top="on", which='both', direction='in')
     plt.xlabel(r'$fD/U$')
-    plt.ylabel(r'$\mathrm{PS}\left(v\right)$')
-    leg = plt.legend(loc='lower left')
-    leg.get_frame().set_edgecolor('black')
-    leg.get_frame().set_facecolor('white')
-    leg.get_frame().set_linewidth(0.5)
-    leg.get_frame().set_alpha(0.85)
+    plt.ylabel(ylabel)
+    # leg = plt.legend(loc='lower left')
+    # leg.get_frame().set_edgecolor('black')
+    # leg.get_frame().set_facecolor('white')
+    # leg.get_frame().set_linewidth(0.5)
+    # leg.get_frame().set_alpha(0.85)
     # ax.yaxis.set_ticks([-2, 0, 2])
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     # ax.get_yaxis().set_ticks([], minor=True)
