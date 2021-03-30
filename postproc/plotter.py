@@ -2021,7 +2021,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
     return
 
 
-def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
+def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None, ylabel=None):
     """
 	Generate a loglog plot of a list of time spectra series
 	:param file: output file name
@@ -2065,9 +2065,9 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
 
     # Edit frame, labels and legend
     plt.xlabel(r'$f/UD$')
-    plt.ylabel(r'$SPS$')
-    # leg = plt.legend(loc='upper right')
-    # leg.get_frame().set_edgecolor('white')
+    if ylabel is not None: plt.ylabel(ylabel)
+    leg = plt.legend(loc='upper right')
+    leg.get_frame().set_edgecolor('white')
 
     # Anotations
     # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
