@@ -112,7 +112,7 @@ ax.set_xlabel(r"$t/D$")
 ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
 # ax.plot(f, uk, c='r')
-ax.loglog(window_t, normed_error, c='r')
+ax.plot(window_t, normed_error, c='r')
 plt.savefig(data_root + f"figures/ensemble_error_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
 plt.close()
 

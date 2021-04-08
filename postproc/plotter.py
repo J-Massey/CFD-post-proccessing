@@ -1674,13 +1674,13 @@ def plotXYSpatial_list(file, y_tuple_list, **kwargs):
             label = label[:-1]
         y = y_tuple[1]
         label = '$' + label + '$'
-        color = colors[i]
+        color = colors[y_tuple[0]]
 
         if 'xD_min' in kwargs:
             x = x[x > kwargs['xD_min']]
             y = y[-x.size:]
 
-        plt.plot(x, y, color=color, lw=1, label=label, marker=markers[i],
+        plt.plot(x, y, color=color, lw=1, label=label, marker=markers[y_tuple[0]],
                  markevery=50, markersize=4)  # , markeredgecolor = 'black', markeredgewidth=0.1)
         y_list.append(y)
 
