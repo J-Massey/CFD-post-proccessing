@@ -11,7 +11,7 @@ import numpy as np
 import postproc.plotter
 import postproc.io
 import postproc.frequency_spectra
-from postproc.profile_convergence import ProfileDataset
+from postproc.convergence import ProfileDataset
 import matplotlib
 import os
 import importlib
@@ -43,7 +43,7 @@ for idx, fn in enumerate(files):
     t_max = max(forces_dic['t'])
     t = forces_dic['t']
 #%%
-importlib.reload(postproc.profile_convergence)
+importlib.reload(postproc.convergence)
 
 rs = ProfileDataset(data_root + t_comparisons).bl_poincare_limit(single_point=True,
                                                                  position=0.1, length_scale=64,

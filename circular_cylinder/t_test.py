@@ -12,7 +12,7 @@ import numpy as np
 import postproc.plotter
 import postproc.gmm
 import postproc.frequency_spectra
-from postproc.profile_convergence import ProfileDataset, plot_poincare
+from postproc.convergence import ProfileDataset, plot_poincare
 import matplotlib.pyplot as plt
 import os, sys
 import torch

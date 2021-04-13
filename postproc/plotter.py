@@ -2032,14 +2032,13 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
 	"""
     plt.style.use(['science', 'grid'])
     fig, ax = plt.subplots(figsize=(7, 5))
-    colors = sns.color_palette("RdBu", len(uk_tuple_list))
+    colors = sns.color_palette("husl", len(uk_tuple_list))
 
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
         if 'pie' in label: label = '\pi'
         uk = uk_tuple[1]
-        label = '$' + label + '$'
         color = colors[i]
         ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
     ax.loglog()
@@ -2066,7 +2065,7 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
     # Edit frame, labels and legend
     plt.xlabel(r'$f/UD$')
     if ylabel is not None: plt.ylabel(ylabel)
-    leg = plt.legend(loc='upper right')
+    leg = plt.legend(loc='lower left')
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
@@ -2079,7 +2078,7 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
 
     # Show plot and save figure
     # plt.show()
-    plt.savefig(file, transparent=False, bbox_inches='tight')
+    plt.savefig(file, transparent=False, bbox_inches='tight', dpi=600)
     return
 
 
@@ -2103,7 +2102,6 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
         if 'pie' in label: label = '\pi'
         if '2D' in label or 'D9' in label: label = '2\mathrm{D}'
         uk = uk_tuple[1]
-        label = '$' + label + '$'
         color = colors[i]
         plt.loglog(freqs_list[i], uk, color=color, lw=0.5, label=label)
 
@@ -2130,11 +2128,11 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
     ax.tick_params(bottom="on", top="on", which='both', direction='in')
     plt.xlabel(r'$fD/U$')
     plt.ylabel(ylabel)
-    # leg = plt.legend(loc='lower left')
-    # leg.get_frame().set_edgecolor('black')
-    # leg.get_frame().set_facecolor('white')
-    # leg.get_frame().set_linewidth(0.5)
-    # leg.get_frame().set_alpha(0.85)
+    leg = plt.legend(loc='lower left')
+    leg.get_frame().set_edgecolor('black')
+    leg.get_frame().set_facecolor('white')
+    leg.get_frame().set_linewidth(0.5)
+    leg.get_frame().set_alpha(0.85)
     # ax.yaxis.set_ticks([-2, 0, 2])
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     # ax.get_yaxis().set_ticks([], minor=True)
@@ -2144,7 +2142,7 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
     # ax.xaxis.grid(True, which='major')
 
     # Show plot and save figure
-    plt.savefig(file, transparent=False, bbox_inches='tight')
+    plt.savefig(file, transparent=False, bbox_inches='tight', dpi=600)
     plt.clf()
     return
 

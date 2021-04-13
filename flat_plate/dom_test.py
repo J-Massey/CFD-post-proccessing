@@ -39,6 +39,7 @@ import postproc.plotter
 
 from collections import deque
 
+
 fs = deque(); uks = deque()
 means = deque(); vars = deque()
 for idx, fn in enumerate(files):
