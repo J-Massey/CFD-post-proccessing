@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: J. Massey
-@description: Res test for flat plate
+@description: Res test for flat plate experiment with Melike Kurt
 @contact: jmom1n15@soton.ac.uk
 """
 
@@ -13,54 +13,51 @@ import postproc.io as io
 import postproc.frequency_spectra
 import matplotlib.pyplot as plt
 import os
-import torch
 import importlib
-from collections import deque
 import seaborn as sns
+from tqdm import tqdm
 
+plt.style.use(['science', 'grid'])
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/res_test/'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/thin_res_test/'
 force_file = '3D/fort.9'
 names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 interest = 'py'
 label = r'$ C_{L_{v}} $'
 
 D = [64, 96, 128, 192, 256]
-# D = [64, 128, 256]
-D = [192, 256]
+D = [64, 128, 256]
+colors = sns.color_palette("husl", len(D))
+
+# How long from 2D to 3D, and when to crop TS
 init = 20
 snip = 200
-colors = sns.color_palette("husl", len(D))
-plt.style.use(['science', 'grid'])
 
 
-# Use dict if only accessing columns, use pandas if rows or loads of columns
+# Write out labels so they're interpretable by latex
 labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $', r'c=192', r'$c=256 $']
-# labels = [r'$ c=64 $', r'$ c=128 $', r'$c=256 $']
 labels = [r'$ c=192 $', r'$c=256 $']
 
-
-importlib.reload(postproc.plotter)
-import postproc.plotter
-
-from collections import deque
-
-fs = deque(); uks = deque()
-means = deque(); vars = deque()
+fs = []; uks = []
+means = []; vars = []
 
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 ax1.set_xlabel(r"$t/D$")
 ax1.set_ylabel(label)
-for idx, fn in enumerate(D):
+for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t']/D[idx], forces_dic[interest]*np.sin(12/180*np.pi)
+    t, u = forces_dic['t']/D[idx], forces_dic[interest]
+    # Transform the forces into the correct plane
+    theta = np.radians(12)
+    rot = np.array(((np.cos(theta), -np.sin(theta)),
+                    (np.sin(theta), np.cos(theta))))
+    # This needs to be changed depending if we want the force in x or y
+    u = rot[1].dot()
     t, u = t[t < snip], u[t < snip]
     t, u = t[t > init], u[t > init]
-    # Should clip so that all the TS are the same length?
-    print(max(t))
 
     # Append the Welch spectra to a list in order to compare
     criteria = postproc.frequency_spectra.FreqConv(t, u, n=3, OL=0.5)

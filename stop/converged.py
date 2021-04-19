@@ -14,6 +14,7 @@ import subprocess
 import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
+plt.style.use(['science', 'grid'])
 
 print("Checking whether spectra have converged")
 
@@ -21,6 +22,54 @@ print("Checking whether spectra have converged")
 def remove(string):
     string = string.replace(" ", "")
     return string
+
+
+def _plot_ts(ti, f):
+    """
+    Just tidying up the above code by holding the plotting func
+    Args:
+        ti: time
+        f: force
+
+    Returns:
+        Time series plot
+    """
+    fig1, ax1 = plt.subplots(figsize=(7, 5))
+
+    ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
+
+    # Edit frame, labels and legend
+    ax1.set_xlabel(r"$t/D$")
+    ax1.set_ylabel(f"${sys.argv[2]}$")
+
+    ax1.plot(t, u, c='r')
+    plt.savefig(Path.cwd().joinpath(f"figures/time_series_{sys.argv[2]}.png"), bbox_inches='tight', dpi=600,
+                transparent=False)
+    plt.close()
+
+
+def _plot_err(ti, e):
+    """
+    Just tidying up the above code by holding the plotting func
+    Args:
+        ti: time
+        e: ensemble error
+
+    Returns:
+        Ensemble error against time
+    """
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
+
+    # Edit frame, labels and legend
+    ax.set_xlabel(r"$t/D$")
+    ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
+
+    ax.plot(ti, e, c='r')
+    plt.savefig(Path.cwd().joinpath(f"figures/ensemble_error_{sys.argv[2]}.png"), bbox_inches='tight', dpi=600,
+                transparent=False)
+    plt.close()
 
 
 if float(sys.argv[1]) < 15:
@@ -47,19 +96,8 @@ if normed_error[-1] < 0.1:
     subprocess.call('touch .kill', shell=True, cwd=Path(data_root).parent)
     subprocess.call('mkdir -p figures', shell=True, cwd=Path(data_root).parent)
 
-    # Plot the ensemble error to see if you might have reached a false positive
-    plt.style.use(['science', 'grid'])
-    fig, ax = plt.subplots(figsize=(7, 5))
-
-    ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-
-    # Edit frame, labels and legend
-    ax.set_xlabel(r"$t/D$")
-    ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
-
-    ax.plot(window_t, normed_error, c='r')
-    plt.savefig(Path.cwd().joinpath(f"figures/ensemble_error_{sys.argv[2]}.png"), bbox_inches='tight', dpi=600,
-                transparent=False)
-    plt.close()
+    # Plot a couple of figs to show that the method behaves
+    _plot_ts(t, u)
+    _plot_err(window_t, normed_error)
 else:
     print("Hasn't yet, hold tight!")
