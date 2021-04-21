@@ -18,5 +18,5 @@ setup(
     license=legal,
     packages=find_packages(exclude=('tests', 'docs')),
     setup_requires=['numpy'],
-    install_requires=['numpy', 'matplotlib', 'torch', 'pandas']
+    install_requires=['numpy', 'matplotlib', 'torch', 'pandas', 'seaborn']
 )
