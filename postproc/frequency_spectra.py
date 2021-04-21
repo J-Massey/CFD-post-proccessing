@@ -181,7 +181,7 @@ class FreqConv:
             freqs_mean = np.mean(tmp_f, axis=0)
             freqs_ensemble_avg.append(freqs_mean)
             area.append(np.trapz(uk_mean, freqs_mean))
-        return np.array(uk_ensemble_avg), np.array(freqs_ensemble_avg), np.array(area)
+        return np.array(uk_ensemble_avg, dtype=object), np.array(freqs_ensemble_avg, dtype=object), np.array(area)
 
     def f_conv(self, cycles, **kwargs):
         """
