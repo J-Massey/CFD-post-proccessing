@@ -40,7 +40,7 @@ def run(n_proc=0,run_folder='test',read_folder=None):
     if os.path.isfile('lotus.f90'):
         shutil.copy('lotus.f90', run_folder)
         try:
-            shutil.copy('converged.py', run_folder)
+            shutil.copy('../converged.py', run_folder)
         except FileNotFoundError:
             print("No stopping criteria, the simulation will run its course")
 

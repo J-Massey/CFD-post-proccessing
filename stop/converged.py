@@ -14,7 +14,6 @@ import subprocess
 import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
-from time import sleep
 
 
 def remove(string):

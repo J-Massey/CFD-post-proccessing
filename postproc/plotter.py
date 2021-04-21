@@ -25,10 +25,10 @@ mpl.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']  # for \text com
 plt.rcParams['animation.ffmpeg_path'] = r"/usr/bin/ffmpeg"
 mpl.rcParams['axes.linewidth'] = 0.5
 
-# plt.switch_backend('AGG') #png
+plt.switch_backend('AGG') #png
 # plt.switch_backend('PS')
 # plt.switch_backend('PDF')  # pdf
-plt.switch_backend('TkAgg')  # GUI
+# plt.switch_backend('TkAgg')  # GUI
 
 # colors = ['black', 'orange', 'cyan', 'green', 'blue', 'red', 'magenta', 'yellow']
 # colors = ['orange', 'cyan', 'green', 'blue', 'red', 'magenta', 'yellow']
