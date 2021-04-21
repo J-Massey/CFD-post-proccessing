@@ -69,7 +69,7 @@ def _plot_err(ti, e):
     plt.close()
 
 if __name__=="__main__":
-    plt.style.use(['science', 'grid'])
+    # plt.style.use(['science', 'grid'])
     print("Checking whether spectra have converged")
     
     if float(sys.argv[1]) < 15:
