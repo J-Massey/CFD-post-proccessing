@@ -1,7 +1,7 @@
 """
 @author: Lucas Deecke
 @description: Simple implementation of Gaussian Mixture Model
-@contact: b.fontgarcia@soton.ac.uk
+@contact: jmom1n15@soton.ac.uk
 """
 
 import torch

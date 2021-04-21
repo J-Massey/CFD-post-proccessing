@@ -13,10 +13,10 @@ setup(
     long_description=readme,
     author='Bernat Font Garcia',
     author_email='b.fontgarcia@soton.ac.uk',
-    keywords=['post-processing, cfd, fortran'],
-    url='https://github.com/b-fg/postproc',
+    keywords=['post-processing, cfd, fortran, machine learning, python'],
+    url='https://github.com/j-massey/postproc',
     license=legal,
     packages=find_packages(exclude=('tests', 'docs')),
     setup_requires=['numpy'],
-    install_requires=['numpy', 'scipy', 'matplotlib', 'torch']
+    install_requires=['numpy', 'matplotlib', 'torch']
 )

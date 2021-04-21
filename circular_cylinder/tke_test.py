@@ -8,16 +8,15 @@
 
 # Imports
 import numpy as np
-import postproc.plotter
 import postproc.io
 import postproc.frequency_spectra
-import postproc.convergence
+import postproc.boundary_layer_convergence
 import os
 import matplotlib.pyplot as plt
 import torch
-import time
 from tqdm import tqdm
 
+plt.style.use(['science', 'grid'])
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/res_test/'
@@ -33,7 +32,7 @@ t_min = min(forces_dic['t'])
 t_max = max(forces_dic['t'])
 t = forces_dic['t']
 
-data = postproc.convergence.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
+data = postproc.boundary_layer_convergence.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
 rs, azis = data.bl_poincare_limit(single_point=True, position=0.6, length_scale=128, print_res=256, print_len=3)
 angles = data.angles
 
@@ -50,7 +49,7 @@ for idx, loop in tqdm(enumerate(instant_tke), ascii=True, desc='Calculate spectr
     u = loop
     ti = t[0:len(loop)]
 
-    cycles = 20
+    cycles = 7
     late = 100
 
     n = int(np.floor((np.max(ti[ti > late]) - np.min(ti[ti > late])) / cycles))
@@ -62,7 +61,7 @@ for idx, loop in tqdm(enumerate(instant_tke), ascii=True, desc='Calculate spectr
     ax.set_title(r'$\theta = $' + f'$ {round(angles[idx], 2)} $')
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     ax.set_xlabel(r"$t/D$")
-    ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
+    ax.set_ylabel(r'$\int \sqrt{(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2} df/ \int \overline{s_{0,n+1}}$')
 
     ax.plot(window_t, normed_error, c='r')
     plt.savefig(data_root + f"figures/{interest}_converged_{idx}.png", bbox_inches='tight', dpi=600,

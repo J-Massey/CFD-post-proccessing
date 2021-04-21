@@ -12,7 +12,7 @@ import numpy as np
 import postproc
 from postproc import cylinder_forces as cf
 from postproc import io,plotter,gmm,frequency_spectra
-from postproc.convergence import ProfileDataset, plot_poincare
+from postproc.boundary_layer_convergence import ProfileDataset, plot_poincare
 import matplotlib
 # matplotlib.use('svg')
 import matplotlib.pyplot as plt
