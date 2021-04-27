@@ -24,7 +24,22 @@ def _resample(t, u):
     dt = (t_max - t_min) / len(t)
     t = np.arange(t_min, t_max, dt)[:-1]  # Regularize t and Skip last, can be problematic if > than t_max
     u = u_function(t)  # Regularize u
-    return t, u
+    return t, u[:-1]
+
+
+def _resample_error(t, u):
+    """
+    Determine the L2 error in the interpolation of the original time series.
+    This will help to quantify the noise threshold of the spectra.
+    Args:
+        t: time
+        u: u
+
+    Returns:
+        L2 error in the resampling process
+    """
+    t_hat, u_hat = _resample(t, u)
+    return np.sum((t_hat - t[:len(t_hat)])**2 + (u_hat - u[:len(t_hat)])**2)
 
 
 def _window(a):
@@ -111,8 +126,10 @@ class FreqConv:
             t_min, t_max = np.min(t), np.max(t)
             dt = (t_max - t_min) / len(t)
 
-        if windowing: u = _window(u)  # Windowing
-        if lowpass: u = _low_pass_filter(u)  # Signal filtering for high frequencies
+        if windowing:
+            u = _window(u)  # Windowing
+        if lowpass:
+            u = _low_pass_filter(u)  # Signal filtering for high frequencies
 
         # Compute power fft and associated frequencies
         uk = 1/(t_max-t_min) * np.fft.fft(u)
@@ -158,10 +175,6 @@ class FreqConv:
         uk_ensemble_avg = deque(); freqs_ensemble_avg = deque()
         area = deque(); tmp_f = deque(); tmp_uk = deque(); ind_wind_area = deque()
         for idx, tup in enumerate(list(zip(t_partial_ol_list, u_partial_ol_list))):
-            # Can't resample all at once because you need the whole signal
-            # So we resample depending on the ensemble mean
-            # Need to fix index error on some window splits
-            # Much nicer when we have the whole signal then no resample inside the loop
             t, u = tup[0], tup[1]
             if idx > 0:
                 u = u - np.mean(u_partial_ol_list[0:idx])
@@ -233,6 +246,8 @@ class FreqConv:
             evaluation of the frequency signals
         :return: freqs 1D array and uk 1D array.
         """
+        # Print the L2 norm resample error
+        # print(_resample_error(self.t, self.u))
         # Re-sample u on a evenly spaced time series (constant dt)
         t, u = _resample(self.t, self.u)
 

@@ -21,7 +21,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/res_test/'
 
-fn = 'd-128'
+fn = 'd-96'
 force_file = '3D/fort.9'
 names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 interest = 'rms'
@@ -54,7 +54,7 @@ for idx, loop in tqdm(enumerate(instant_tke), ascii=True, desc='Calculate spectr
 
     n = int(np.floor((np.max(ti[ti > late]) - np.min(ti[ti > late])) / cycles))
     criteria = postproc.frequency_spectra.FreqConv(t=ti[ti > late], u=u[ti > late], n=n, OL=0.5)
-
+    f, uk = criteria.welch()
     normed_error, window_t = criteria.f_conv(cycles)
 
     fig, ax = plt.subplots(figsize=(7, 5))

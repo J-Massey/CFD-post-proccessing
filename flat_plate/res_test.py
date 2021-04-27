@@ -13,7 +13,6 @@ import postproc.io as io
 import postproc.frequency_spectra
 import matplotlib.pyplot as plt
 import os
-import importlib
 import seaborn as sns
 from tqdm import tqdm
 
