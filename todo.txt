@@ -1,7 +1,5 @@
 ToDO
 
-Modules to include:
- - models.py - Matlab and Python with mixing length
-
-Improvements:
- - Multithreading for wavenumber_spectra.py
+- Get error in downsampling for rms
+- Set up Cf for cc
+- Plot contours for cc (highmem node iridis)

@@ -162,10 +162,10 @@ class FreqConv:
                 lowpass: Boolean to apply a low-pass filter to the transformed signal.
                 windowing: Boolean to apply a windowing function to the temporal signal.
                 downsample: Integer (where 0=False) for the number of points to average on the downsampling procedure.
-        :return: uks: list of
+        :return: uks_labelled: list of
 
         Returns:
-                uks: n dimensional list of (label, uk) tuple where the label is the window
+                uks_labelled: n dimensional list of (label, uk) tuple where the label is the window
                 fs : n dimensional list of frequencies
         """
         # Split the signal into it's constituent windows
@@ -247,7 +247,7 @@ class FreqConv:
         :return: freqs 1D array and uk 1D array.
         """
         # Print the L2 norm resample error
-        # print(_resample_error(self.t, self.u))
+        # print(_resample_error(data.t, data.u))
         # Re-sample u on a evenly spaced time series (constant dt)
         t, u = _resample(self.t, self.u)
 
@@ -269,7 +269,7 @@ class FreqConv:
         :param a: array to split and overlap.
         :param n: number of splits of a.
         :param OL: overlap.
-        :return: c, a list of the splits of a in function of n and OL
+        :return: length_scale, a list of the splits of a in function of n and OL
         """
         splits_size = a.size // self.n
         nOL = int(np.floor(splits_size * self.OL))

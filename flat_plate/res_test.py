@@ -18,13 +18,13 @@ from tqdm import tqdm
 
 plt.style.use(['science', 'grid'])
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/thin_res_test/'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/circle_caps/eps-1/'
 force_file = '3D/fort.9'
 names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
-interest = 'v2'
+interest = 'p'
 label = r'$ C_{L_{p}} $'
+tit = r'$\epsilon = 1.$'
 
-D = [64, 96, 128, 192, 256]
 D = [64, 96, 128]
 colors = sns.color_palette("husl", len(D))
 
@@ -32,22 +32,20 @@ colors = sns.color_palette("husl", len(D))
 init = 20
 snip = 200
 
-
 # Write out labels so they're interpretable by latex
-labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $', r'c=192', r'$c=256 $']
 labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $']
 
-fs = []; uks = []
+fs, uks_labelled, uks = [], [], []
 
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r"$t/D$")
+ax1.set_xlabel(r' $t/c $')
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t']/D[idx], np.array((forces_dic[interest+'x'], forces_dic[interest+'y']))
+    t, u = forces_dic['t'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'y']))
     # Transform the forces into the correct plane
     theta = np.radians(12)
     rot = np.array((np.cos(theta), -np.sin(theta)),
@@ -61,16 +59,20 @@ for idx, fn in tqdm(enumerate(D), desc='File loop'):
     # Append the Welch spectra to a list in order to compare
     criteria = postproc.frequency_spectra.FreqConv(t, u, n=3, OL=0.5)
     f, uk = criteria.welch()
-    fs.append(f); uks.append((labels[idx], uk))
+    fs.append(f)
+    uks.append(uk)
+    uks_labelled.append((labels[idx], uk))
     ax1.plot(t, u, label=labels[idx])
 
 ax1.legend()
 fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
 plt.close()
 
-postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{interest}.png',
-                                                    uks, fs,
-                                                    title=r'$\epsilon = 0.5$',
-                                                    ylabel=r'$PS$ ' + label)
+postproc.plotter.plot_fft(data_root + f'figures/spectra_{interest}.pdf',
+                          uks, fs, xlim=[0, 1],
+                          l_label=labels, colours=colors, title=tit)
 
-
+postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{interest}.pdf',
+                                            uks_labelled, fs,
+                                            title=tit,
+                                            ylabel=r'$PS$ ' + label)

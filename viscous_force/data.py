@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 @author: J. Massey
-@description: Linear regression of DNS data
+@description: Linear regression of DNS dat
 @contact: jmom1n15@soton.ac.uk
 """
 
 import numpy as np
 import pandas as pd
 import postproc.io
-import postproc.boundary_layer_convergence
+import postproc.boundary_layer
 import os
 import matplotlib.pyplot as plt
 import torch
@@ -33,11 +33,11 @@ t_min = min(forces_dic['t'])
 t_max = max(forces_dic['t'])
 t = forces_dic['t']
 
-profiles = postproc.boundary_layer_convergence.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
+profiles = postproc.boundary_layer.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
 rs, u0 = profiles.bl_poincare_limit(single_point=True, position=0.5, length_scale=96, print_res=256, print_len=3)
 
 
 if __name__ == "__main__":
-    print("Importing data")
+    print("Importing dat")
 
-    print("Imported data")
+    print("Imported dat")

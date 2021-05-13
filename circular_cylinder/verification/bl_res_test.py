@@ -11,7 +11,7 @@ import numpy as np
 import postproc.plotter
 import postproc.io
 import postproc.frequency_spectra
-from postproc.boundary_layer_convergence import ProfileDataset
+from postproc.boundary_layer import ProfileDataset
 import os
 import matplotlib.pyplot as plt
 import torch
@@ -22,12 +22,16 @@ plt.style.use(['science', 'grid'])
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/res_test/'
 
-files = ['eps-1_2', 'eps-1', 'eps-2']
-eps = [0.5, 1, 2]
-D = 96
-colors = sns.color_palette("husl", len(files))
+# What are the folder names of the simulations
+files = ['d-32', 'd-48', 'd-64', 'd-96', 'd-128']
+# files = ['d-96', 'd-128']
+
+# Length scales we are comparing
+D = [32, 48, 64, 96, 128]
+# length_scale = [96, 128]
+colors = sns.color_palette("husl", len(D))
 
 # Path to  where we printed the mean forces
 force_file = '3D/fort.9'
@@ -43,7 +47,7 @@ angled_dic_f = [[] for _ in range(n_angles)]
 angled_dic_uk = [[] for _ in range(n_angles)]
 
 fig1, ax1 = plt.subplots(figsize=(7, 5))
-ax1.set_xlabel(r"$t/D$")
+ax1.set_xlabel(r"$t/length_scale$")
 ax1.set_ylabel(r"$\sqrt{u^{\prime^{2}}+v^{\prime^{2}}}$")
 
 for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
@@ -53,11 +57,17 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     t_min = min(forces_dic['t'])
     t_max = max(forces_dic['t'])
     t = forces_dic['t']
+
+    # Wasn't consistent with print res so correct for this
+    if D[idx] <=64:
+        res = 128
+    else:
+        res = 256
     # Get the profiles
     data = ProfileDataset(os.path.join(data_root, fn, '3D'), True)
 
     # Turn single point value extracted from profile into rms fluctuation
-    rs, azis = data.bl_poincare_limit(single_point=True, position=0.6, length_scale=96, print_res=256, print_len=3)
+    rs, azis = data.bl_poincare_limit(single_point=True, position=0.6, length_scale=D[idx], print_res=res, print_len=3)
     angles = data.angles
 
     rs = torch.tensor(rs, device=device)
@@ -68,7 +78,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     instant_tke = (0.5 * (r_dash ** 2 + azi_dash ** 2)).cpu().numpy()
 
     ti = t[0:len(instant_tke[0])]
-    ax1.plot(ti, instant_tke[0], color=colors[idx], label=r'$ \epsilon = $' + str(eps[idx]))
+    ax1.plot(ti, instant_tke[0], color=colors[idx], label=f"length_scale = ${D[idx]}$")
 
     for idx1, loop in tqdm(enumerate(instant_tke), desc='Spectra', ascii=True):
         # Define how many cycles to drop to allow the flow to initialise from 2D to 3D
@@ -79,7 +89,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
         criteria = postproc.frequency_spectra.FreqConv(t=ti[ti > late], u=loop[ti > late], n=n, OL=0.5)
         f, uk = criteria.welch()
         angled_dic_f[idx1].append(f)
-        angled_dic_uk[idx1].append((r'$ \epsilon = $' + str(eps[idx]), uk))
+        angled_dic_uk[idx1].append((f"length_scale = ${D[idx]}$", uk))
 
 plt.legend()
 fig1.savefig(data_root + f"figures/time_series_tke.png", bbox_inches='tight', dpi=600, transparent=False)

@@ -14,7 +14,7 @@ from math import sqrt
 def main():
     n, d = 300, 2
 
-    # generate some data points ..
+    # generate some dat points ..
     data = torch.Tensor(n, d).normal_()
     # .. and shift them around to non-standard Gaussians
     data[:n//2] -= 1
@@ -26,7 +26,7 @@ def main():
     n_components = 2
     model = GaussianMixture(n_components, d)
     model.fit(data)
-    # .. used to predict the data points as they where shifted
+    # .. used to predict the dat points as they where shifted
     y = model.predict(data)
 
     plot(data, y)
@@ -40,8 +40,8 @@ def plot(data, y):
     ax.set_xlabel("Dimension 1")
     ax.set_ylabel("Dimension 2")
 
-    # plot the locations of all data points ..
-    for i, point in enumerate(data.data):
+    # plot the locations of all dat points ..
+    for i, point in enumerate(data.dat):
         if i <= n//2:
             # .. separating them by ground truth ..
             ax.scatter(*point, color="#000000", s=3, alpha=.75, zorder=n+i)

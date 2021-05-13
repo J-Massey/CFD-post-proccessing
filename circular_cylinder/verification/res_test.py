@@ -36,7 +36,7 @@ fs = []; uks = []
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r"$t/D$")
+ax1.set_xlabel(r"$t/length_scale$")
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, 'd-' + str(fn), force_file), names))
@@ -47,8 +47,8 @@ for idx, fn in tqdm(enumerate(D), desc='File loop'):
 
     criteria = postproc.frequency_spectra.FreqConv(t, u, n=3, OL=0.5)
     f, uk = criteria.welch()
-    fs.append(f); uks.append((r'$ D = $' + str(D[idx]), uk))
-    ax1.plot(t, u, label=r'$ D = $' + str(D[idx]))
+    fs.append(f); uks.append((r'$ length_scale = $' + str(D[idx]), uk))
+    ax1.plot(t, u, label=r'$ length_scale = $' + str(D[idx]))
 
 ax1.legend()
 fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)

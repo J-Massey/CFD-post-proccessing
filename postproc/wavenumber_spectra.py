@@ -113,15 +113,15 @@ def _wavenumbers(*args):
 
 def _window_ndim(a, wfunction):
 	"""
-	Performs an in-place windowing on N-dimensional spatial-domain data.
+	Performs an in-place windowing on N-dimensional spatial-domain dat.
 	This is done to mitigate boundary effects in the FFT.
-	:param a: n-dimensional array input data to be windowed, modified in place.
+	:param a: n-dimensional array input dat to be windowed, modified in place.
 	:param wfunction: 1D window generation function. Function should accept one argument: the window length.
 		   Example: scipy.signal.hamming
 	:return: windowed n-dimensional array a
 	"""
 	if a.ndim == 0:
-		raise ValueError('Input data to be windowed cannot be scalar')
+		raise ValueError('Input dat to be windowed cannot be scalar')
 	for axis, axis_size in enumerate(a.shape):
 		window = wfunction(axis_size)
 		for i in range(len(a.shape)):

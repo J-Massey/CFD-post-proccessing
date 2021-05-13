@@ -12,7 +12,7 @@ import numpy as np
 import postproc.plotter
 import postproc.gmm
 import postproc.frequency_spectra
-from postproc.boundary_layer_convergence import ProfileDataset, plot_poincare
+from postproc.boundary_layer import ProfileDataset, plot_poincare
 import matplotlib.pyplot as plt
 import os, sys
 import torch
@@ -55,22 +55,22 @@ for idx in range(len(xs[0])):
     for case, (x, y) in enumerate(zip(xs, ys)):
         # Plot part of the t_100 case
         data = torch.tensor([x[idx],y[idx]]).to(device)
-        # Flatten the data
+        # Flatten the dat
         data = torch.transpose(data,0,1)
-        print("Made data a Tensor"); print("Running GMM")
+        print("Made dat a Tensor"); print("Running GMM")
         # Next, the Gaussian mixture is instantiated and ..
         n_components = 2
         model = postproc.gmm.GaussianMixture(n_components, np.shape(data)[1]).cuda()
         model.fit(data, delta=1e-5, n_iter=1e6)
         print("Gmm fit")
-        # .. used to predict the data points as they where shifted
+        # .. used to predict the dat points as they where shifted
         y = model.predict(data)
         likelihood = model.score_samples(data).cpu().numpy()
 
-        # postproc.gmm.plot_gmm(data.cpu(), y.cpu(),
+        # postproc.gmm.plot_gmm(dat.cpu(), y.cpu(),
         #             y_label=r"$ \theta $", x_label=r"$ r $", label=['3D','2D'],
         #             file=data_root_t+f"figures/group_{idx}.svg",
-        #             title=f"$ {round(angles[idx], 2)}^r $ from the front",
+        #             tit=f"$ {round(angles[idx], 2)}^r $ from the front",
         #             colours=colours)
 
         # plt.close()
@@ -90,8 +90,8 @@ for idx in range(len(xs[0])):
         #     # pow_spec = postproc.frequency_spectra.freq_spectra_Welch(t[:int(loop*len(t)/5)],likelihood[:int(loop*len(t)/5)])
         #
         #     postproc.plotter.simple_plot(*pow_spec,
-        #                 y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/D $", colour=colours[loop-1],
-        #                 colours=colours[:len(xs)], title=f"$ {round(angles[idx], 2)}^r $ from the front",
+        #                 y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/length_scale $", colour=colours[loop-1],
+        #                 colours=colours[:len(xs)], tit=f"$ {round(angles[idx], 2)}^r $ from the front",
         #                 file=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
         #
         # plt.close()

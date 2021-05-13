@@ -11,7 +11,7 @@ import numpy as np
 import postproc.plotter
 import postproc.io
 import postproc.frequency_spectra
-from postproc.boundary_layer_convergence import ProfileDataset
+from postproc.boundary_layer import ProfileDataset
 import os
 import matplotlib.pyplot as plt
 import torch
@@ -30,7 +30,7 @@ files = ['d-32', 'd-48', 'd-64', 'd-96', 'd-128']
 
 # Length scales we are comparing
 D = [32, 48, 64, 96, 128]
-# D = [96, 128]
+# length_scale = [96, 128]
 colors = sns.color_palette("husl", len(D))
 
 # Path to  where we printed the mean forces
@@ -47,7 +47,7 @@ angled_dic_cd = [[] for _ in range(n_angles)]
 angled_dic_cl = [[] for _ in range(n_angles)]
 
 fig1, ax1 = plt.subplots(figsize=(7, 5))
-ax1.set_xlabel(r"$t/D$")
+ax1.set_xlabel(r"$t/length_scale$")
 ax1.set_ylabel(r"$C_{D_{f}}$")
 
 for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
@@ -67,9 +67,9 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     data = ProfileDataset(os.path.join(data_root, fn, '3D'), True)
     angles = data.angles
 
-    # Get the O(1) F-D
+    # Get the O(1) F-length_scale
     cd, cl = data.fd_1(length_scale=D[idx], print_res=res, print_len=3)
-    ax1.plot(t, cd[2], color=colors[idx], label=f"D = ${D[idx]}$")
+    ax1.plot(t, cd[2], color=colors[idx], label=f"length_scale = ${D[idx]}$")
 
     for idx1, (loop1, loop2) in tqdm(enumerate(zip(cd, cl)), desc='Loooop', ascii=True):
         # Restructure so that the angles can be directly compared at different resolutions
@@ -83,7 +83,7 @@ plt.close(fig1)
 
 # # Plot spectra
 # for idx, (loop_f, loop_uk) in enumerate(zip(angled_dic_cd, angled_dic_cl)):
-#     postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{idx}.png',
+#     postproc.plotter.plotLogLogTimeSpectra_list(vtr_file + f'figures/log_spectra_{idx}.png',
 #                                                 loop_uk, loop_f,
-#                                                 title=r'$ \theta$' + f'$ = {round(angles[idx], 2)}^r $',
+#                                                 tit=r'$ \theta$' + f'$ = {round(angles[idx], 2)}^r $',
 #                                                 ylabel=r'$PS(\sqrt{u^{\prime^{2}}+v^{\prime^{2}}})$')

@@ -25,15 +25,15 @@ def test_em_matches_sklearn():
     model_sk = sklearn.mixture.GaussianMixture(n_components,
                                                covariance_type="diag",
                                                init_params="random",
-                                               means_init=np.squeeze(model.mu.data.numpy()),
-                                               precisions_init=np.squeeze(1. / np.sqrt(var_init.data.numpy())))
+                                               means_init=np.squeeze(model.mu.dat.numpy()),
+                                               precisions_init=np.squeeze(1. / np.sqrt(var_init.dat.numpy())))
 
     model_sk._initialize_parameters(x_np, np.random.RandomState())
     log_prob_sk = model_sk._estimate_log_prob(x_np)
     log_prob = model._estimate_log_prob(x)
 
     # Test whether log-probabilities are approximately equal
-    np.testing.assert_almost_equal(np.squeeze(log_prob.data.numpy()),
+    np.testing.assert_almost_equal(np.squeeze(log_prob.dat.numpy()),
                                    log_prob_sk,
                                    decimal=2,
                                    verbose=True)
@@ -42,7 +42,7 @@ def test_em_matches_sklearn():
     _, log_resp = model._e_step(x)
 
     # Test whether E-steps are approximately equal
-    np.testing.assert_almost_equal(np.squeeze(log_resp.data.numpy()),
+    np.testing.assert_almost_equal(np.squeeze(log_resp.dat.numpy()),
                                    log_resp_sk,
                                    decimal=0,
                                    verbose=True)
@@ -55,19 +55,19 @@ def test_em_matches_sklearn():
     pi, mu, var = model._m_step(x, log_prob)
 
     # Test whether pie ..
-    np.testing.assert_almost_equal(np.squeeze(pi.data.numpy()),
+    np.testing.assert_almost_equal(np.squeeze(pi.dat.numpy()),
                                    pi_sk,
                                    decimal=1,
                                    verbose=True)
 
     # .. mu ..
-    np.testing.assert_almost_equal(np.squeeze(mu.data.numpy()),
+    np.testing.assert_almost_equal(np.squeeze(mu.dat.numpy()),
                                    mu_sk,
                                    decimal=1,
                                    verbose=True)
 
     # .. and var are approximately equal
-    np.testing.assert_almost_equal(np.squeeze(var.data.numpy()),
+    np.testing.assert_almost_equal(np.squeeze(var.dat.numpy()),
                                    var_sk,
                                    decimal=1,
                                    verbose=True)

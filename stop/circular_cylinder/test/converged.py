@@ -37,7 +37,7 @@ def _plot_ts(ti, f):
     ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
     # Edit frame, labels and legend
-    ax1.set_xlabel(r"$t/D$")
+    ax1.set_xlabel(r"$t/length_scale$")
     ax1.set_ylabel(f"${sys.argv[2]}$")
 
     ax1.plot(t, u, c='r')
@@ -61,7 +61,7 @@ def _plot_err(ti, e):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
     # Edit frame, labels and legend
-    ax.set_xlabel(r"$t/D$")
+    ax.set_xlabel(r"$t/length_scale$")
     ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
     ax.plot(ti, e, c='r')

@@ -252,7 +252,8 @@ def vortZ(u, v, **kwargs):
 	# else:
 	x = kwargs.get('x', None)
 	y = kwargs.get('y', None)
-	return ddx(v, x)-ddy(u, y)
+	acc = kwargs.get('acc', 1)
+	return ddx(v, x, acc)-ddy(u, y, acc)
 
 
 def vort(u, v, w, **kwargs):

@@ -10,7 +10,7 @@
 import numpy as np
 import postproc.io
 import postproc.frequency_spectra
-import postproc.boundary_layer_convergence
+import postproc.boundary_layer
 import os
 import matplotlib.pyplot as plt
 import torch
@@ -32,7 +32,7 @@ t_min = min(forces_dic['t'])
 t_max = max(forces_dic['t'])
 t = forces_dic['t']
 
-data = postproc.boundary_layer_convergence.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
+data = postproc.boundary_layer.ProfileDataset(os.path.join(data_root, fn, '3D'), True)
 rs, azis = data.bl_poincare_limit(single_point=True, position=0.6, length_scale=128, print_res=256, print_len=3)
 angles = data.angles
 
@@ -60,7 +60,7 @@ for idx, loop in tqdm(enumerate(instant_tke), ascii=True, desc='Calculate spectr
     fig, ax = plt.subplots(figsize=(7, 5))
     ax.set_title(r'$\theta = $' + f'$ {round(angles[idx], 2)} $')
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-    ax.set_xlabel(r"$t/D$")
+    ax.set_xlabel(r"$t/length_scale$")
     ax.set_ylabel(r'$\int \sqrt{(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2} df/ \int \overline{s_{0,n+1}}$')
 
     ax.plot(window_t, normed_error, c='r')

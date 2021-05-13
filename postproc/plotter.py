@@ -12,9 +12,11 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mpl_colors
 import matplotlib.patches as patches
 import matplotlib.colorbar as colorbar
+from matplotlib.lines import Line2D
 import matplotlib.animation as animation
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import seaborn as sns
+
 colors = sns.color_palette("husl", 14)
 
 plt.rc('text', usetex=True)
@@ -25,7 +27,7 @@ mpl.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']  # for \text com
 plt.rcParams['animation.ffmpeg_path'] = r"/usr/bin/ffmpeg"
 mpl.rcParams['axes.linewidth'] = 0.5
 
-plt.switch_backend('AGG') #png
+plt.switch_backend('AGG')  # png
 # plt.switch_backend('PS')
 # plt.switch_backend('PDF')  # pdf
 # plt.switch_backend('TkAgg')  # GUI
@@ -47,7 +49,7 @@ def plot_history(f, t, label, file, title, **kwargs):
 	:param t: Time [numpy 1D array]
 	:param label: Y label
 	:param file: output file name [string]
-	:param title: graph title
+	:param title: graph tit
 	:param kwargs: Select which additional information you want to include in the plot: 'St', 'CL_rms', 'CD_rms', 'n_periods',
 		passing the corresponding values. E.g. 'St=0.2'.
 	:return: -
@@ -56,7 +58,7 @@ def plot_history(f, t, label, file, title, **kwargs):
     fig = plt.gcf()
 
     # Show lines
-    plt.plot(t, f, color='red', lw=1, label=r'$3\mathrm{D}\,\, \mathrm{total}$')
+    plt.plot(t, f, color='red', lw=1, label=r'$3\mathrm{length_scale}\,\, \mathrm{total}$')
 
     # Set limits
     ax.set_xlim(min(t), max(t))
@@ -65,7 +67,7 @@ def plot_history(f, t, label, file, title, **kwargs):
     # Edit frame, labels and legend
     ax.axhline(linewidth=1)
     ax.axvline(linewidth=1)
-    plt.xlabel(r'$t/D$')
+    plt.xlabel(r'$t/length_scale$')
     plt.ylabel(label)
     plt.title(title)
     # leg = plt.legend(loc='upper right')
@@ -125,7 +127,7 @@ def fully_defined_plot(x, y, file, x_label, y_label, title=None,
 
 def domain_test_plot(means, var, file, y_label, title=None, doms=None):
     plt.style.use(['science', 'grid'])
-    fig, ax = plt.subplots(figsize=(10,3))
+    fig, ax = plt.subplots(figsize=(10, 3))
     ax.set_title(title)
 
     n = np.arange(0, len(doms), 1)
@@ -179,7 +181,7 @@ def plot_2D(u, file='test.pdf', **kwargs):
     shift = kwargs.get('shift', (0, 0))
     xwindow = kwargs.get('xwindow', None)
     ywindow = kwargs.get('ywindow', None)
-    title = kwargs.get('title', '')
+    title = kwargs.get('tit', '')
     n_ticks = kwargs.get('n_ticks', 10)
     n_decimals = kwargs.get('n_decimals', 2)
     case = kwargs.get('case', None)
@@ -214,8 +216,8 @@ def plot_2D(u, file='test.pdf', **kwargs):
 
     # Create contourf given a normalized (norm) colormap (cmap)
     if lim[0] < 0 and lim[1] > 0:
-        ll = np.linspace(lim[0], -eps, int(levels / 2))
-        rr = np.linspace(eps, lim[1], int(levels / 2))
+        ll = np.linspace(-eps, lim[0], int(levels / 2))
+        rr = np.linspace(lim[1], eps, int(levels / 2))
         lvls = np.append(ll, rr)
         if contour:
             extra_levels = 5
@@ -265,6 +267,12 @@ def plot_2D(u, file='test.pdf', **kwargs):
         cyl = patches.Circle((0, 0), 0.5, linewidth=0.2, edgecolor='black', facecolor=grey_color, zorder=9999)
         ax.add_patch(cyl)
         # cax = divider.append_axes("right", size="5%", pad=0.0, aspect=15)
+        cax = divider.append_axes("right", size="5%", pad=0.15)
+    elif case == 'flat_plate':
+        grey_color = '#dedede'
+        rec = patches.Rectangle((-0.5, -1 / 91.2), 1, 1 / 45.71, linewidth=0.2,
+                                edgecolor='black', facecolor=grey_color, zorder=9999)
+        ax.add_patch(rec)
         cax = divider.append_axes("right", size="5%", pad=0.15)
 
     # -- Add colorbar
@@ -387,7 +395,7 @@ def animate_2Dx2(a, b, file, **kwargs):
     ax1.yaxis.set_ticks([-2, 0, 2])
     ax2.yaxis.set_ticks([-2, 0, 2])
 
-    # Set title, circles and text
+    # Set tit, circles and text
     title = r'$t = ' + '{:.2f}'.format(time[0]) + '$'
     ax1.set_title(title, size=12, y=1.05)
     grey_color = '#dedede'
@@ -396,7 +404,7 @@ def animate_2Dx2(a, b, file, **kwargs):
     ax1.add_patch(cyl1)
     ax2.add_patch(cyl2)
     plt.subplots_adjust(hspace=0.05, bottom=0.15)
-    ax1.text(-1, 2.3, r'$2{\text -}\mathrm{D}$')
+    ax1.text(-1, 2.3, r'$2{\text -}\mathrm{length_scale}$')
     ax2.text(-1, 2.3, r'$L_z=\pi$')
 
     # Add colorbar
@@ -692,7 +700,7 @@ def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
     ax.yaxis.set_ticks([-2, 0, 2])
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
-    # -- Set title, circles and text
+    # -- Set tit, circles and text
     grey_color = '#dedede'
     cyl = patches.Circle((0, 0), 0.51, linewidth=0.2, edgecolor='black', facecolor=grey_color, zorder=9999)
     ax.add_patch(cyl)
@@ -774,10 +782,10 @@ def plot2Dseparation(u, file, **kwargs):
     # divider = make_axes_locatable(ax)
     # cax = divider.append_axes("right", size="5%", pad=0.05)
     # v = np.linspace(lim[0], lim[1], 10, endpoint=True)
-    # c = mpl.cm.get_cmap(cmap)
-    # c.set_under('r')
-    # c.set_over('b')
-    # plt.colorbar(cf, cax=cax, norm=norm, cmap=c, ticks=v, boundaries=v)
+    # length_scale = mpl.cm.get_cmap(cmap)
+    # length_scale.set_under('r')
+    # length_scale.set_over('b')
+    # plt.colorbar(cf, cax=cax, norm=norm, cmap=length_scale, ticks=v, boundaries=v)
 
     # Show, save and close figure
     plt.savefig(file, transparent=True, bbox_inches='tight')
@@ -811,7 +819,7 @@ def two_point_correlations_single(a, fname):
     leg1.get_frame().set_alpha(0.5)
 
     ax.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax.set_xlabel(r'$\log d/D$')
+    ax.set_xlabel(r'$\log d/length_scale$')
 
     ax.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
     ax.set_xscale('log', nonposx='clip')
@@ -863,8 +871,8 @@ def two_point_correlations(a, fname):
 
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax3.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax3.set_xlabel(r'$\log d/D$')
-    ax4.set_xlabel(r'$\log d/D$')
+    ax3.set_xlabel(r'$\log d/length_scale$')
+    ax4.set_xlabel(r'$\log d/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -918,9 +926,9 @@ def two_point_correlations_3_horizontal(a, fname):
     plt.setp(ax3.get_yticklabels(), visible=False)
 
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax1.set_xlabel(r'$\log d/D$')
-    ax2.set_xlabel(r'$\log d/D$')
-    ax3.set_xlabel(r'$\log d/D$')
+    ax1.set_xlabel(r'$\log d/length_scale$')
+    ax2.set_xlabel(r'$\log d/length_scale$')
+    ax3.set_xlabel(r'$\log d/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -974,7 +982,7 @@ def two_point_correlations_3_vertical(a, fname):
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax2.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax3.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax3.set_xlabel(r'$\log d/D$')
+    ax3.set_xlabel(r'$\log d/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -1032,7 +1040,7 @@ def CL_CD_theta(fy, fx, t, alphas, times, fname):
     plt.setp(ax1.get_xticklabels(), visible=False)
     ax2.set_ylim(90, 165)
     ax2.yaxis.set_ticks([100, 120, 140, 160])
-    ax2.set_xlabel(r'$tU/D$')
+    ax2.set_xlabel(r'$tU/length_scale$')
     ax3.set_xlabel(r'$C_L$')
     # ax3.set_ylabel(r'$\theta_l+\theta_u$') #labelpad=-3 for 0.5
     # ax3.set_ylim(-24,24) #0.5
@@ -1124,7 +1132,7 @@ def CL_CD_theta_2(fy, fx, t, alphas, times, fname):
     plt.setp(ax1.get_xticklabels(), visible=False)
     ax2.set_ylim(90, 165)
     ax2.yaxis.set_ticks([100, 120, 140, 160])
-    ax2.set_xlabel(r'$tU/D$')
+    ax2.set_xlabel(r'$tU/length_scale$')
     ax3.set_xlabel(r'$C_L$')
     ax3.set_ylabel(r'$\theta_l+\theta_u$')  # labelpad=-3 for 0.5
     ax3.set_ylim(-24, 24)  # 0.5
@@ -1178,7 +1186,7 @@ def plotCL(fy, t, file, colour='red', label=None, **kwargs):
     # Edit frame, labels and legend
     # ax.axhline(linewidth=1)
     # ax.axvline(linewidth=1)
-    plt.xlabel(r'$t/D$')
+    plt.xlabel(r'$t/length_scale$')
     plt.ylabel(r'$C_L$')
     leg = plt.legend(loc='upper right')
     # leg.get_frame().set_edgecolor('black')
@@ -1242,7 +1250,7 @@ def plotTKEspatial(tke, file, **kwargs):
         ax.set_ylim(min(tke), max(tke) * 2)
 
     # Edit frame, labels and legend
-    plt.xlabel('$x/D$')
+    plt.xlabel('$x/length_scale$')
     plt.ylabel('$K$')
     leg = plt.legend(loc='upper right')
     leg.get_frame().set_edgecolor('white')
@@ -1422,7 +1430,7 @@ def plotProfiles_multiple(file, tuple_profiles_tuple_list, **kwargs):
             if 'piD' in label:
                 label = '\pi'
             elif 'D9' in label:
-                label = '2\mathrm{D}'
+                label = '2\mathrm{length_scale}'
             else:
                 label = label[:-1]
             label = '$' + label + '$'
@@ -1539,7 +1547,7 @@ def plotXYSpatial(y, label, file, **kwargs):
 
     # Edit frame, labels and legend
     y_label = '$' + label + '$'
-    plt.xlabel('$x/D$')
+    plt.xlabel('$x/length_scale$')
     plt.ylabel(y_label)
     leg = plt.legend(loc='upper right')
     leg.get_frame().set_edgecolor('white')
@@ -1791,7 +1799,7 @@ def plotCp_list(file, y_tuple_list, x_list, **kwargs):
     i = 0
     for y_tuple in y_tuple_list:
         label = y_tuple[0]
-        if 'piD' in label: label = '\pi D'
+        if 'piD' in label: label = '\pi length_scale'
         y = y_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
@@ -1827,6 +1835,34 @@ def plotCp_list(file, y_tuple_list, x_list, **kwargs):
 
 
 # ------------------------------------------------------ LogLog Spatial
+def plot_fft(file, xs, ys, x_label=r'$ f/U c $', y_label=None, title=None,
+             colour='black', colours=None, l_label=None, marker=None,
+             xlim=None, ylim=None):
+
+    plt.style.use(['science', 'grid'])
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.set_title(title)
+
+    ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
+
+    # Edit frame, labels and legend
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if xlim is not None: ax.set_xlim(xlim)
+    if ylim is not None: ax.set_ylim(ylim)
+
+    # Make legend manually
+    if l_label and colours is not None:
+        legend_elements = []
+        for idx, loop in enumerate(l_label):
+            legend_elements.append(Line2D([0], [0], color=colours[idx], lw=4, label=loop))
+        ax.legend(handles=legend_elements, loc='upper right')
+    for idx, (x, y) in enumerate(zip(xs, ys)):
+        ax.plot(y, x, color=colours[idx], marker=marker)
+    plt.savefig(file, bbox_inches='tight', transparent=True)
+    return
+
+
 def plotLogLogSpatialSpectra(file, wn, uk):
     """
 	Generate a loglog plot of a 1D spatial signal
@@ -1882,7 +1918,7 @@ def plotLogLogSpatialSpectra_list(file, uk_tuple_list, wn_list):
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
-        if 'piD' in label: label = '\pi D'
+        if 'piD' in label: label = '\pi length_scale'
         uk = uk_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
@@ -1967,6 +2003,7 @@ def plotLogLogTimeSpectra(freqs, uk, file):
     # Show plot and save figure
     plt.savefig(file, transparent=False, bbox_inches='tight')
     return
+
 
 def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
     """
@@ -2100,7 +2137,7 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
     for i, uk_tuple in enumerate(uk_tuple_list):
         label = uk_tuple[0]
         if 'pie' in label: label = '\pi'
-        if '2D' in label or 'D9' in label: label = '2\mathrm{D}'
+        if '2D' in label or 'D9' in label: label = '2\mathrm{length_scale}'
         uk = uk_tuple[1]
         color = colors[i]
         plt.loglog(freqs_list[i], uk, color=color, lw=0.5, label=label)
@@ -2163,7 +2200,7 @@ def plotLogLogSpatialSpectra_list_cascade(file, uk_tuple_list, freqs_list):
         label = uk_tuple[0]
         print(label)
         if 'pie' in label: label = '\pi'
-        if '2D' in label: label = '2\mathrm{D}'
+        if '2D' in label: label = '2\mathrm{length_scale}'
         uk = uk_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
@@ -2185,7 +2222,7 @@ def plotLogLogSpatialSpectra_list_cascade(file, uk_tuple_list, freqs_list):
 
     # Edit frame, labels and legend
     ax.tick_params(bottom="on", top="on", which='both', direction='in')
-    plt.xlabel(r'$\kappa D$')
+    plt.xlabel(r'$\kappa length_scale$')
     leg = plt.legend(loc='lower left')
     leg.get_frame().set_edgecolor('white')
     ax.get_yaxis().set_ticks([])
@@ -2432,7 +2469,7 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
 #     # Show lines
 #     for i, case in enumerate(cases):
 #         print(i)
-#         ax.scatter(x[i], y[i], c=colors[i], marker=markers[i], s=30, linewidths=1, label=case)
+#         ax.scatter(x[i], y[i], length_scale=colors[i], marker=markers[i], s=30, linewidths=1, label=case)
 #
 #     # Edit figure, axis, limits
 #     ax.set_xlim(0.06, 0.15)

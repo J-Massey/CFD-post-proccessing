@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: B. Font Garcia, J. Massey
-@description: Input/output module to read binary Fortran data of 2D and 3D fields with different
-    number of components. Also useful to unpack text data in column-written.
+@description: Input/output module to read binary Fortran dat of 2D and 3D fields with different
+    number of components. Also useful to unpack text dat in column-written.
 @contact: b.fontgarcia@soton.ac.uk
 """
 # Imports
@@ -15,17 +15,17 @@ from postproc.calc import make_periodic
 def read_data(file, shape, **kwargs):
     """
     Return the velocity components of a velocity vector field stored in binary format.
-    The data field is supposed to have been written as: (for k; for j; for i;) where the last dimension
+    The dat field is supposed to have been written as: (for k; for j; for i;) where the last dimension
     is the quickest varying index. Each record should have been written as: u, v, w.
     The return velocity components are always converted in np.double precision type.
     :param file: file to read from.
-    :param shape: Shape of the data as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
+    :param shape: Shape of the dat as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
     :param kwargs:
         dtype: numpy dtype object. Single or double precision expected.
         stream (depracated, use always stream output): type of access of the binary output. If false, there is a 4-byte header
             and footer around each "record" in the binary file (means +2 components at each record) (can happen in some
             Fortran compilers if access != 'stream').
-        periodic: If the user desires to make the data periodic in a certain direction: (0,0,1) makes periodic in z.
+        periodic: If the user desires to make the dat periodic in a certain direction: (0,0,1) makes periodic in z.
         ncomponents: Specify the number of components. Default = ndims of the field
     :return: the components of the vector or scalar field.
     """
@@ -131,14 +131,14 @@ def read_and_write_fractioned_mean_data(f_w_list, shape, **kwargs):
     """
     Computes a weighted average of files which containg partial averages of quantities.
     :param f_w_list: list of tuples containing (file, weight).
-    :param shape: Shape of the data as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
+    :param shape: Shape of the dat as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
     :param kwargs:
     :param kwargs:
         dtype: numpy dtype object. Single or double precision expected.
         stream (depracated, use always stream output): type of access of the binary output. If false, there is a 4-byte header
             and footer around each "record" in the binary file (means +2 components at each record) (can happen in some
             Fortran compilers if access != 'stream').
-        periodic: If the user desires to make the data spanwise periodic (true) or not (false).
+        periodic: If the user desires to make the dat spanwise periodic (true) or not (false).
         ncomponents: Specify the number of components. Default = ndims of the field
     :return: The weighted average of the files containing partial averages.
     """
@@ -325,7 +325,7 @@ def read_vti(file):
     sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
     # Generate grid
-    # nPoints = data.GetNumberOfPoints()
+    # nPoints = dat.GetNumberOfPoints()
     (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
     grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
 
@@ -338,7 +338,6 @@ def read_vtr(fname):
     reader.Update()
     data = reader.GetOutput()
     pointData = data.GetPointData()
-    print('done')
     sh = data.GetDimensions()[::-1]
     ndims = len(sh)
 
@@ -349,7 +348,6 @@ def read_vtr(fname):
         a = v[..., d]
         vec.append(a)
     vec = np.array(vec)
-    print('vec', vec.shape)
     # get scalar field
     sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
@@ -357,7 +355,6 @@ def read_vtr(fname):
     x = np.array(data.GetXCoordinates())
     y = np.array(data.GetYCoordinates())
     z = np.array(data.GetZCoordinates())
-    print(x.shape, y.shape, z.shape)
 
     return np.transpose(vec, (0,3,2,1)), np.transpose(sca, (0,3,2,1)), np.array([x, y, z])
 

@@ -40,10 +40,10 @@ u = forces_dic[interest] * np.sin(12*np.pi/180)
 
 # postproc.plotter.fully_defined_plot(t, u,
 #                                     y_label=label,
-#                                     x_label=r"$ t/D $",
+#                                     x_label=r"$ t/length_scale $",
 #                                     colour='red',
-#                                     title=f"Time series",
-#                                     file=data_root + f"figures/time_series_{interest}.png")
+#                                     tit=f"Time series",
+#                                     file=vtr_file + f"figures/time_series_{interest}.png")
 
 
 cycles = 10
@@ -68,10 +68,10 @@ fig, ax = plt.subplots(figsize=(7, 5))
 ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
 # Edit frame, labels and legend
-ax.set_xlabel(r"$t/D$")
+ax.set_xlabel(r"$t/length_scale$")
 ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
-# ax.plot(f, uk, c='r')
+# ax.plot(f, uk, length_scale='r')
 ax.plot(window_t, normed_error, c='r')
 plt.savefig(data_root + f"figures/ensemble_error_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
 plt.close()

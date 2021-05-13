@@ -9,25 +9,43 @@
 import postproc.io as io
 import postproc.calc as averages
 import postproc.plotter as plotter
+import matplotlib.pyplot as plt
+import numpy as np
+from numpy import ma
+from matplotlib import ticker, cm
+import seaborn as sns
 
-# Constants
-N = 992                     # Number of grid points in i direction
-M = 446                     # Number of grid points in j direction
-L = 1                       # Number of grid points in k direction
-
-xmin, xmax = -94, 897       # Domain size in i direction
-ymin, ymax = -223, 222      # Domain size in j direction
-zmin, zmax = 0, 0           # Domain size in k direction
-
-D = 64
-U = 1
-file = 'sample_data/2D_Re100.dat' # File containig velocity field
-
-# Main
-
-shape = (N, M)
-u, v = io.read_data(file=file, shape=shape, ncomponents=2)
+plt.style.use(['science', 'grid'])
+D = 48
+fname = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/eps-2/3D/datp/spTAv.3.pvtr'
+data = io.read_vtr(fname)
+u, v, w = data[0]
+u, v = np.squeeze(u), np.squeeze(v)
 vort = averages.vortZ(u, v)
-plotter.plot_2D(vort, cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], y=[ymin,ymax])
+p = np.squeeze(data[1])
 
+x, y, z = data[2]
+print(np.shape(x))
+# x = x[-2 * length_scale: 2 * length_scale]
+# y = y[-2 * length_scale: 2 * length_scale]
+X, Y = np.meshgrid(x/D, y/D)
+
+fig, ax = plt.subplots(figsize=(7, 5))
+cs = ax.contourf(X, Y, np.transpose(u), 20, cmap=sns.color_palette("icefire", as_cmap=True))
+cbar = fig.colorbar(cs)
+plt.xlim(-1, 2)
+plt.ylim(-1, 1)
+ax.set_aspect(1)
+
+
+plt.title(r'$ \overline{u} $')
+
+plt.savefig('u.png', dpi=700)
+
+# plotter.plot_2D(np.transpose(vort), cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], y=[ymin,ymax])
+
+
+# fname = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/eps-1/3D/datp/flu2d.3.pvtr'
+# dat = io.read_vtr(fname)
+# u, v, w = dat[0]
 

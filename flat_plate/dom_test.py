@@ -28,10 +28,10 @@ force_file = '3D/fort.9'
 names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 
 # Use dict if only accessing columns, use pandas if rows or loads of columns
-labels = [r'$ c(8, 8, 0.25) $', r'$ c(8, 12, 0.25) $', r'$ c(10, 14, 0.25) $',
-          r'$ c(12, 12, 0.25) $', r'$ c(16, 8, 0.25) $', r'$ c(16, 16, 0.25) $',
-          r'$ c(32,32, 0.25) $']
-labels = [r'$ c(8, 8, 0.25) $', r'$ c(16, 8, 0.25) $', r'$ c(16, 16, 0.25) $', r'$ c(32,32, 0.25) $']
+labels = [r'$ length_scale(8, 8, 0.25) $', r'$ length_scale(8, 12, 0.25) $', r'$ length_scale(10, 14, 0.25) $',
+          r'$ length_scale(12, 12, 0.25) $', r'$ length_scale(16, 8, 0.25) $', r'$ length_scale(16, 16, 0.25) $',
+          r'$ length_scale(32,32, 0.25) $']
+labels = [r'$ length_scale(8, 8, 0.25) $', r'$ length_scale(16, 8, 0.25) $', r'$ length_scale(16, 16, 0.25) $', r'$ length_scale(32,32, 0.25) $']
 
 
 importlib.reload(postproc.plotter)
@@ -54,13 +54,13 @@ for idx, fn in enumerate(files):
     # uk = uk / area
     fs.append(f); uks.append((labels[idx], uk))
     # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ t $", y_label=r"$ C_{L_{p}} $",
-    #                                     file=data_root + f'figures/CLp-t.svg',
+    #                                     file=vtr_file + f'figures/CLp-t.svg',
     #                                     colour=colours[idx])  # , colours=colours[:len(files)], l_label=labels[:len(files)])
 
     means.append(np.mean(u)); vars.append(np.var(u))
 
 # postproc.plotter.domain_test_plot(np.array(means), np.array(vars), y_label=r"$ \overline{C_{L_{p}}} $",
-#                                   file=data_root + 'figures/summary_dom_means_py.svg', doms=labels[:len(files)])
+#                                   file=vtr_file + 'figures/summary_dom_means_py.svg', doms=labels[:len(files)])
 fs = list(fs)
 uks = list(uks)
 postproc.plotter.plotLogLogTimeSpectra_list_cascade(data_root + 'figures/summary_dom_test.svg', uks, fs,
