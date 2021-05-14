@@ -42,7 +42,7 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
     # Now plot what we are interested in
     if interest == 'p':
         vals = data.p
-        vals = vals * data.iter_correction(30)
+        vals = vals * 0.28 / np.max(vals)
         # cmap = sns.color_palette("seismic", as_cmap=True)
     elif interest == 'u':
         vals = data.U
@@ -281,9 +281,8 @@ class PIVFramework:
 
 if __name__ == "__main__":
     plt.style.use(['science', 'grid'])
-    length = [96]
+    c = 96
     tit = r'$ \overline{|U|} $'
-    tit = r'$ \overline{||U|^{\prime}|} $'
     exp_data = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field/exp_data/smooth_Re10k_AoA_12.mat'
     data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field'
     data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/circle_caps/eps-half'
@@ -291,12 +290,17 @@ if __name__ == "__main__":
     # field = 'mat_file'
     # plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/exp_mag.pdf'),
     #                        title=tit, lims=[0, 1.3])
-    for c in length:
-        flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'flu2d',
-                            length_scale=c, rotation=12, downsample=8)
-        field = 'rms_mag'
-        # field = 'p'
-        plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_rms_mag.pdf'),
-                               title=tit)
-    # print(np.shape(flow.rms))
+    flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
+                        length_scale=c, rotation=12, downsample=8)
+    field = 'mag'
+    # field = 'p'
+    plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_mag.pdf'),
+                           title=tit)
+    tit = r'$ \overline{||U|^{\prime}|} $'
+    flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'rms2D',
+                        length_scale=c, rotation=12, downsample=8, lims=[0, 1.3])
+    field = 'p'
+    # field = 'p'
+    plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_rms_mag.pdf'),
+                           title=tit, lims=[0, 0.3])
 

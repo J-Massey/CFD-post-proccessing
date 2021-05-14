@@ -45,11 +45,12 @@ u0, v0 = profiles.get_u(0, 96, 2, 256)
 # Find 1st order fd at eps away from the boundary (is this good enough to be the answer?) show verification
 u2, v2 = profiles.get_u(2, 96, 2, 256)
 cd, cl = u2 / 2, v2 / 2
+my_data = np.stack((p, u0, cd))
 p = torch.tensor(p, device=device)
-p = p.reshape([1, np.product(p.size())]).squeeze()
 u0 = torch.tensor(u0, device=device)
-u0 = u0.reshape([1, np.product(u0.size())]).squeeze()
 cd = torch.tensor(cd, device=device)
+p = p.reshape([1, np.product(p.size())]).squeeze()
+u0 = u0.reshape([1, np.product(u0.size())]).squeeze()
 cd = cd.reshape([1, np.product(cd.size())]).squeeze()
 
 D = torch.stack((p, u0, cd), dim=1)
@@ -57,10 +58,10 @@ x_dataset = D[:, 0:2].t()
 y_dataset = D[:, 2].t()
 
 # %%
-a, b = 0, 0, 0
+a, b = -0.1, 1.2
 # %%
 lr = 1e-5
-its = int(1e6)
+its = int(1e5)
 optimiser = optim.Adam
 # Provide some initial guesses from the visualisation
 coeffs = [a, b]
@@ -100,7 +101,15 @@ print(
 a = a.item()
 b = b.item()
 #%%
-cd_mod = model()
+
+
+def model(x_input):
+    pressure, vel = x_input
+    return a * pressure + b * vel
+
+
+cd_mod = model(x_dataset.cpu().numpy())
+
 
 #%%
 # Test on mean quantities
@@ -114,7 +123,7 @@ colors = sns.color_palette("husl", 4)
 # Plot TSs and save spectra
 fig, ax = plt.subplots(figsize=(5, 3))
 ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax.set_xlabel(r"$t/c")
+ax.set_xlabel(r"$t/c$")
 ax.set_ylabel(r'$C_{D_f}$')
 # ax.plot(fos['t'], -fos['vforcex'], label=r'$U^{\prime}$')
 ax.plot(fos['t'], fos['vx'], label=r'$O(1)$ FD')
