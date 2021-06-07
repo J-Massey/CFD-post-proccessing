@@ -9,3 +9,13 @@
 /*.egg
 /.idea/
 /.eggs/
+
+# Ignore images and shit
+*.png
+*.gif
+*.pdf
+*.out
+*.npy
+*.pickle
+*.9
+*.10
