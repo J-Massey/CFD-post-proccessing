@@ -20,7 +20,7 @@ plt.style.use(['science', 'grid'])
 
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/circle_caps/eps-1/'
 force_file = '3D/fort.9'
-names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
+names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 interest = 'p'
 label = r'$ C_{L_{p}} $'
 tit = r'$\epsilon = 1.$'
@@ -33,25 +33,25 @@ init = 20
 snip = 200
 
 # Write out labels so they're interpretable by latex
-labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $']
+labels = [r'$ D=64 $', r'$ D=96 $', r'$ D=128 $']
 
 fs, uks_labelled, uks = [], [], []
 
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r' $t/c $')
+ax1.set_xlabel(r' $torch/D $')
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'y']))
+    t, u = forces_dic['torch'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'Y']))
     # Transform the forces into the correct plane
     theta = np.radians(12)
     rot = np.array((np.cos(theta), -np.sin(theta)),
                    (np.sin(theta), np.cos(theta)))
     rot = np.array((np.sin(theta), np.cos(theta)))
-    # This needs to be changed depending if we want the force in x or y
+    # This needs to be changed depending if we want the force in x or Y
     u = rot.dot(u)
     t, u = t[t < snip], u[t < snip]
     t, u = t[t > init], u[t > init]

@@ -25,7 +25,7 @@ data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/dom_test/'
 files = ['8_8', '8_12', '10_14', '12_12', '16_8', '16_16', '32_32']
 files = ['8_8', '16_8', '16_16', '32_32']
 force_file = '3D/fort.9'
-names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
+names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 
 # Use dict if only accessing columns, use pandas if rows or loads of columns
 labels = [r'$ length_scale(8, 8, 0.25) $', r'$ length_scale(8, 12, 0.25) $', r'$ length_scale(10, 14, 0.25) $',
@@ -45,16 +45,16 @@ means = deque(); vars = deque()
 for idx, fn in enumerate(files):
     fos = (io.unpack_flex_forces(os.path.join(data_root, fn, force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t'] / D, forces_dic['py']
-    # u = u[t > 1]; t = t[t > 1]
+    t, u = forces_dic['torch'] / D, forces_dic['py']
+    # u = u[torch > 1]; torch = torch[torch > 1]
     n = 4
 
     f, uk = postproc.frequency_spectra.freq_spectra_Welch(t, u)
     # area = np.trapz(uk, f)
     # uk = uk / area
     fs.append(f); uks.append((labels[idx], uk))
-    # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ t $", y_label=r"$ C_{L_{p}} $",
-    #                                     file=vtr_file + f'figures/CLp-t.svg',
+    # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ torch $", y_label=r"$ C_{L_{p}} $",
+    #                                     file=vtr_file + f'figures/CLp-torch.svg',
     #                                     colour=colours[idx])  # , colours=colours[:len(files)], l_label=labels[:len(files)])
 
     means.append(np.mean(u)); vars.append(np.var(u))

@@ -25,7 +25,7 @@ U = 1
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/t_test/'
 file = '16_8'
 force_file = '3D/fort.9'
-names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
+names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 interest = 'py'
 
 # Use dict if only accessing columns, use pandas if rows or loads of columns
@@ -34,13 +34,13 @@ label = r'$C_{L_{v}}$'
 fos = (io.unpack_flex_forces(os.path.join(data_root, file, force_file), names))
 forces_dic = dict(zip(names, fos))
 
-t = forces_dic['t'] / D
+t = forces_dic['torch'] / D
 u = forces_dic[interest] * np.sin(12*np.pi/180)
-# u = np.sin(20*t) + 2*np.sin(10*t)
+# u = np.sin(20*torch) + 2*np.sin(10*torch)
 
-# postproc.plotter.fully_defined_plot(t, u,
+# postproc.plotter.fully_defined_plot(torch, u,
 #                                     y_label=label,
-#                                     x_label=r"$ t/length_scale $",
+#                                     x_label=r"$ torch/length_scale $",
 #                                     colour='red',
 #                                     tit=f"Time series",
 #                                     file=vtr_file + f"figures/time_series_{interest}.png")
@@ -68,7 +68,7 @@ fig, ax = plt.subplots(figsize=(7, 5))
 ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
 # Edit frame, labels and legend
-ax.set_xlabel(r"$t/length_scale$")
+ax.set_xlabel(r"$torch/length_scale$")
 ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
 # ax.plot(f, uk, length_scale='r')
