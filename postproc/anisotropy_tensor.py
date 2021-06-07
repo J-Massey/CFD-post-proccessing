@@ -53,7 +53,7 @@ def invariants(b):
 
 	I = np.trace(b) # tr(b) = 0
 	II = -0.5 * np.trace(np.einsum('ijkl,jmkl->imkl', b, b)) # -0.5*tr(b**2)
-	III = np.linalg.det(b.T).T # det(b)
+	III = np.linalg.det(b.torch).T # det(b)
 	eta = np.sqrt(-1 / 3 * II)
 	xi = np.cbrt(1 / 2 * III)
 

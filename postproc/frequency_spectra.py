@@ -16,13 +16,13 @@ def _resample(t, u):
     """
     Regularise the time interval and fit cubic function to u.
     Returns:
-        Resampled u,t
+        Resampled u,torch
     """
     u = u - np.mean(u)
     u_function = interp1d(t, u, kind='cubic')
     t_min, t_max = np.min(t), np.max(t)
     dt = (t_max - t_min) / len(t)
-    t = np.arange(t_min, t_max, dt)[:-1]  # Regularize t and Skip last, can be problematic if > than t_max
+    t = np.arange(t_min, t_max, dt)[:-1]  # Regularize torch and Skip last, can be problematic if > than t_max
     u = u_function(t)  # Regularize u
     return t, u[:-1]
 
@@ -155,7 +155,7 @@ class FreqConv:
         for each window, as well as the mean and var for these ffts. It then takes an ensembled average of these
         windows to show the convergence of a spectra.
         Args:
-            t: Time series
+            torch: Time series
             u: Signal Series
             **kwargs:
                 resample: Boolean to resample the signal evenly spaced in time.
@@ -183,7 +183,7 @@ class FreqConv:
             u_function = interp1d(t, u, kind='cubic')
             t_min, t_max = np.min(t), np.max(t)
             dt = (t_max - t_min) / len(t)
-            t = np.arange(t_min, t_max+dt, dt)[0:int(len(u)-1)]  # Regularize t and Skip last, can be problematic if > than t_max
+            t = np.arange(t_min, t_max+dt, dt)[0:int(len(u)-1)]  # Regularize torch and Skip last, can be problematic if > than t_max
             u = u_function(t)
 
             freqs, uk = self.freq(t=t, u=u, resample=False, windowing=True, **kwargs)
@@ -205,7 +205,7 @@ class FreqConv:
 
         Returns:
             RMS: RMS difference between adjacent spectra normalised by the integral of that spectra
-            t: 1d numpy array holding the times the windows are centred around
+            torch: 1d numpy array holding the times the windows are centred around
 
         """
         labelled_uks_e, fs_e, area = self.ensemble(**kwargs)
@@ -247,7 +247,7 @@ class FreqConv:
         :return: freqs 1D array and uk 1D array.
         """
         # Print the L2 norm resample error
-        # print(_resample_error(data.t, data.u))
+        # print(_resample_error(data.torch, data.u))
         # Re-sample u on a evenly spaced time series (constant dt)
         t, u = _resample(self.t, self.u)
 

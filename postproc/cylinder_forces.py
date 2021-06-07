@@ -37,7 +37,7 @@ def find_St(t, fy, D, U):
 
 def rms(y):
     """
-	Compute the rms value of a signal y
+	Compute the rms value of a signal Y
 	:param y: Signal
 	:return: y_rms
 	"""

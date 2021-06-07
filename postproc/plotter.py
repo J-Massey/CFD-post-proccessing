@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: B. Font Garcia
-@description: Functions to plot 2D colormaps and CL-t graphs.
+@description: Functions to plot 2D colormaps and CL-torch graphs.
 @contact: b.fontgarcia@soton.ac.uk
 """
 # Imports
@@ -23,7 +23,7 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='sans-serif', size=16)  # use 13(JFM) or 16(SNH)
 mpl.rc('xtick', labelsize=16)
 mpl.rc('ytick', labelsize=16)
-mpl.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']  # for \text command
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'  # for \text command
 plt.rcParams['animation.ffmpeg_path'] = r"/usr/bin/ffmpeg"
 mpl.rcParams['axes.linewidth'] = 0.5
 
@@ -67,7 +67,7 @@ def plot_history(f, t, label, file, title, **kwargs):
     # Edit frame, labels and legend
     ax.axhline(linewidth=1)
     ax.axvline(linewidth=1)
-    plt.xlabel(r'$t/length_scale$')
+    plt.xlabel(r'$torch/length_scale$')
     plt.ylabel(label)
     plt.title(title)
     # leg = plt.legend(loc='upper right')
@@ -168,7 +168,7 @@ def plot_2D(u, file='test.pdf', **kwargs):
 			  Eg: file = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
-		y=[ymin,ymax] is the y axis minimum and maximum specified
+		Y=[ymin,ymax] is the Y axis minimum and maximum specified
 		annotate: Boolean if annotations for min and max values of the field (and locations) are desired
 	"""
     from matplotlib.ticker import FormatStrFormatter, MultipleLocator, FuncFormatter
@@ -193,9 +193,9 @@ def plot_2D(u, file='test.pdf', **kwargs):
     if 'grid' in kwargs:
         grid = kwargs['grid']
         x, y = grid[0] / scaling, grid[1] / scaling
-    elif 'x' in kwargs and 'y' in kwargs:
+    elif 'x' in kwargs and 'Y' in kwargs:
         x = np.transpose(kwargs.get('x')) / scaling + shift[0]
-        y = np.transpose(kwargs.get('y')) / scaling + shift[1]
+        y = np.transpose(kwargs.get('Y')) / scaling + shift[1]
         x, y = np.meshgrid(x, y)
     elif 'x_lims' in kwargs and 'y_lims' in kwargs:
         xlims = kwargs.get('x_lims')
@@ -227,7 +227,7 @@ def plot_2D(u, file='test.pdf', **kwargs):
         clvls = levels
         lvls = np.linspace(lim[0], lim[1], levels + 1)
 
-    u = u.T
+    u = u.torch
     if xwindow is not None:
         x_args = np.where(np.logical_and(np.any(x > xwindow[0], axis=0), np.any(x < xwindow[1], axis=0)))[0]
         x = x[:, x_args]
@@ -326,12 +326,12 @@ def animate_2Dx2(a, b, file, **kwargs):
         for c in c2.collections:
             c.remove()  # removes only the contours, leaves the rest intact
 
-        c1 = ax1.contour(x.T, y.T, a[i].T, clvls, linewidths=0.05, colors='k')
-        c2 = ax2.contour(x.T, y.T, b[i].T, clvls, linewidths=0.05, colors='k')
-        cf1 = ax1.contourf(x.T, y.T, a[i].T, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
-        cf2 = ax2.contourf(x.T, y.T, b[i].T, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
+        c1 = ax1.contour(x.T, y.T, a[i].torch, clvls, linewidths=0.05, colors='k')
+        c2 = ax2.contour(x.T, y.T, b[i].torch, clvls, linewidths=0.05, colors='k')
+        cf1 = ax1.contourf(x.T, y.T, a[i].torch, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
+        cf2 = ax2.contourf(x.T, y.T, b[i].torch, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
 
-        title = r'$t = ' + '{:.2f}'.format(time[i]) + '$'
+        title = r'$torch = ' + '{:.2f}'.format(time[i]) + '$'
         ax1.set_title(title, size=12, y=1.03)
         return [c1, c2, cf1, cf2]
 
@@ -355,9 +355,9 @@ def animate_2Dx2(a, b, file, **kwargs):
     if 'grid' in kwargs:
         grid = kwargs['grid']
         x, y = grid[0] / scaling, grid[1] / scaling
-    elif 'x' in kwargs and 'y' in kwargs:
+    elif 'x' in kwargs and 'Y' in kwargs:
         x = np.transpose(kwargs.get('x')) / scaling + xshift
-        y = np.transpose(kwargs.get('y')) / scaling + yshift
+        y = np.transpose(kwargs.get('Y')) / scaling + yshift
         x, y = np.meshgrid(x, y)
     else:
         xmin, xmax = 0, N - 1
@@ -377,10 +377,10 @@ def animate_2Dx2(a, b, file, **kwargs):
         clvls = np.append(levels, np.linspace(lim[1] + dl, lim[1] + extra_levels * dl, extra_levels))
     norm = mpl_colors.Normalize(vmin=lim[0], vmax=lim[1])
 
-    c1 = ax1.contour(x.T, y.T, a[0].T, clvls, linewidths=0.05, colors='k')
-    c2 = ax2.contour(x.T, y.T, b[0].T, clvls, linewidths=0.05, colors='k')
-    cf1 = ax1.contourf(x.T, y.T, a[0].T, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
-    cf2 = ax2.contourf(x.T, y.T, b[0].T, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
+    c1 = ax1.contour(x.T, y.T, a[0].torch, clvls, linewidths=0.05, colors='k')
+    c2 = ax2.contour(x.T, y.T, b[0].torch, clvls, linewidths=0.05, colors='k')
+    cf1 = ax1.contourf(x.T, y.T, a[0].torch, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
+    cf2 = ax2.contourf(x.T, y.T, b[0].torch, levels, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
 
     cf = [c1, c2, cf1, cf2]
 
@@ -396,7 +396,7 @@ def animate_2Dx2(a, b, file, **kwargs):
     ax2.yaxis.set_ticks([-2, 0, 2])
 
     # Set tit, circles and text
-    title = r'$t = ' + '{:.2f}'.format(time[0]) + '$'
+    title = r'$torch = ' + '{:.2f}'.format(time[0]) + '$'
     ax1.set_title(title, size=12, y=1.05)
     grey_color = '#dedede'
     cyl1 = patches.Circle((0, 0), 0.5, linewidth=0.2, edgecolor='black', facecolor=grey_color, zorder=9999)
@@ -416,11 +416,11 @@ def animate_2Dx2(a, b, file, **kwargs):
     # else:
     #	 ticks = np.linspace(lim[0], lim[1], n_ticks + 1)
     # cbar_ax = plt.colorbar(cf2, ax=[ax1, ax2], extend='both', norm=norm).ax
-    # cbar_ax.set_title(field_name, y=1.02, loc='left', size=12)
+    # cbar_ax.set_title(field_name, Y=1.02, loc='left', size=12)
     # fmt_str = r'${:.' + str(n_decimals) + 'f}$'
-    # cbar_ax.set_yticklabels([fmt_str.format(t) for t in ticks])
+    # cbar_ax.set_yticklabels([fmt_str.format(torch) for torch in ticks])
     # cbar_ax.yaxis.set_tick_params(pad=5, direction='out', size=1)  # your number may vary
-    # cbar_ax.set_title(field_name, x=1, y=1.02, loc='left', size=12)
+    # cbar_ax.set_title(field_name, x=1, Y=1.02, loc='left', size=12)
 
     # Animate
     writer = animation.FFMpegWriter(fps=fps, extra_args=['-vcodec', 'libx264'])
@@ -492,7 +492,7 @@ def plot2D_uv(u, cmap, lvls, lim, file, **kwargs):
 			  Eg: file = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
-		y=[ymin,ymax] is the y axis minimum and maximum specified
+		Y=[ymin,ymax] is the Y axis minimum and maximum specified
 		annotate: Boolean if annotations for min and max values of the field (and locations) are desired
 	"""
     # Internal imports
@@ -508,10 +508,10 @@ def plot2D_uv(u, cmap, lvls, lim, file, **kwargs):
         xmin, xmax = 0, N - 1
     else:
         xmin, xmax = kwargs['x'][0], kwargs['x'][1]
-    if not 'y' in kwargs:
+    if not 'Y' in kwargs:
         ymin, ymax = -M / 2, M / 2 - 1
     else:
-        ymin, ymax = kwargs['y'][0], kwargs['y'][1]
+        ymin, ymax = kwargs['Y'][0], kwargs['Y'][1]
     annotate = kwargs.get('annotate', False)
     scaling = kwargs.get('scaling', 1)
     xshift = kwargs.get('xshift', 0)
@@ -529,7 +529,7 @@ def plot2D_uv(u, cmap, lvls, lim, file, **kwargs):
 
     # Create contourf given a normalized (norm) colormap (cmap)
     norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-    # cf = plt.contourf(x, y, u, '--', lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
+    # cf = plt.contourf(x, Y, u, '--', lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
     r = ax.contour(x, y, u, lvls, colors='k')
     for line, lvl in zip(r.collections, r.levels):
         if lvl < 0:
@@ -589,10 +589,10 @@ def plot2D_circulation(u, cmap, lvls, lim, file, **kwargs):
         xmin, xmax = 0, N - 1
     else:
         xmin, xmax = kwargs['x'][0], kwargs['x'][1]
-    if not 'y' in kwargs:
+    if not 'Y' in kwargs:
         ymin, ymax = -M / 2, M / 2 - 1
     else:
-        ymin, ymax = kwargs['y'][0], kwargs['y'][1]
+        ymin, ymax = kwargs['Y'][0], kwargs['Y'][1]
     annotate = kwargs.get('annotate', False)
     scaling = kwargs.get('scaling', 1)
     xshift = kwargs.get('xshift', 0)
@@ -610,7 +610,7 @@ def plot2D_circulation(u, cmap, lvls, lim, file, **kwargs):
 
     # Create contourf given a normalized (norm) colormap (cmap)
     norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-    # cf = plt.contourf(x, y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
+    # cf = plt.contourf(x, Y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
     ax.contour(x, y, u, lvls, linewidths=0.2, colors='k')
     cf = ax.contourf(x, y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
 
@@ -643,7 +643,7 @@ def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
 			  Eg: file = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
-		y=[ymin,ymax] is the y axis minimum and maximum specified
+		Y=[ymin,ymax] is the Y axis minimum and maximum specified
 		annotate: Boolean if annotations for min and max values of the field (and locations) are desired
 	"""
     # Internal imports
@@ -661,23 +661,23 @@ def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
     if not 'y_lim' in kwargs:
         ymin, ymax = -M / 2, M / 2 - 1
     else:
-        ymin, ymax = kwargs['y'][0], kwargs['y'][1]
+        ymin, ymax = kwargs['Y'][0], kwargs['Y'][1]
     annotate = kwargs.get('annotate', False)
     scaling = kwargs.get('scaling', 1)
     xshift = kwargs.get('xshift', 0)
     yshift = kwargs.get('yshift', 0)
 
     # Uniform grid generation
-    if 'x' not in kwargs and 'y' not in kwargs:
+    if 'x' not in kwargs and 'Y' not in kwargs:
         x = np.linspace(xmin / scaling, xmax / scaling, N)
         y = np.linspace(ymin / scaling, ymax / scaling, M)
         x, y = x + xshift, y + yshift
         x, y = np.meshgrid(x, y)
-    elif 'x' in kwargs and 'y' in kwargs:
+    elif 'x' in kwargs and 'Y' in kwargs:
         x = np.transpose(kwargs.get('x')) / scaling
-        y = np.transpose(kwargs.get('y')) / scaling
+        y = np.transpose(kwargs.get('Y')) / scaling
     else:
-        raise ValueError('Pass both x and y, or none.')
+        raise ValueError('Pass both x and Y, or none.')
 
     u = np.transpose(u)
 
@@ -687,7 +687,7 @@ def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
 
     # Create contourf given a normalized (norm) colormap (cmap)
     norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-    # cf = plt.contourf(x, y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
+    # cf = plt.contourf(x, Y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
     ax.contour(x, y, u, lvls, linewidths=0.2, colors='k')
     cf = ax.contourf(x, y, u, lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
 
@@ -723,7 +723,7 @@ def plot2Dseparation(u, file, **kwargs):
 			  Eg: file = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
-		y=[ymin,ymax] is the y axis minimum and maximum specified
+		Y=[ymin,ymax] is the Y axis minimum and maximum specified
 		annotate: Boolean if annotations for min and max values of the field (and locations) are desired
 	"""
     # Internal imports
@@ -759,11 +759,11 @@ def plot2Dseparation(u, file, **kwargs):
     norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
     # lvls = np.linspace(lim[0], lim[1], lvls + 1)
     if ptype == 'contourf':
-        # ax.contour(x, y, u, lvls, linewidths=0.2, colors='k')
-        # cf = ax.contourf(x.T, y.T, u.T, levels=lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
-        cf = ax.contourf(x.T, y.T, u.T, levels=lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
+        # ax.contour(x, Y, u, lvls, linewidths=0.2, colors='k')
+        # cf = ax.contourf(x.torch, Y.torch, u.torch, levels=lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap, extend='both')
+        cf = ax.contourf(x.T, y.T, u.torch, levels=lvls, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
     else:
-        cf = ax.pcolormesh(x.T, y.T, u.T, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
+        cf = ax.pcolormesh(x.T, y.T, u.torch, vmin=lim[0], vmax=lim[1], norm=norm, cmap=cmap)
 
     # Scale contourf and set limits
     plt.axis('scaled')
@@ -819,7 +819,7 @@ def two_point_correlations_single(a, fname):
     leg1.get_frame().set_alpha(0.5)
 
     ax.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax.set_xlabel(r'$\log d/length_scale$')
+    ax.set_xlabel(r'$\log dis/length_scale$')
 
     ax.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
     ax.set_xscale('log', nonposx='clip')
@@ -871,8 +871,8 @@ def two_point_correlations(a, fname):
 
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax3.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax3.set_xlabel(r'$\log d/length_scale$')
-    ax4.set_xlabel(r'$\log d/length_scale$')
+    ax3.set_xlabel(r'$\log dis/length_scale$')
+    ax4.set_xlabel(r'$\log dis/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -926,9 +926,9 @@ def two_point_correlations_3_horizontal(a, fname):
     plt.setp(ax3.get_yticklabels(), visible=False)
 
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax1.set_xlabel(r'$\log d/length_scale$')
-    ax2.set_xlabel(r'$\log d/length_scale$')
-    ax3.set_xlabel(r'$\log d/length_scale$')
+    ax1.set_xlabel(r'$\log dis/length_scale$')
+    ax2.set_xlabel(r'$\log dis/length_scale$')
+    ax3.set_xlabel(r'$\log dis/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -982,7 +982,7 @@ def two_point_correlations_3_vertical(a, fname):
     ax1.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax2.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
     ax3.set_ylabel(r'$\left\langle v_1, v_2 \right\rangle$')
-    ax3.set_xlabel(r'$\log d/length_scale$')
+    ax3.set_xlabel(r'$\log dis/length_scale$')
 
     for q in ax:
         q.tick_params(bottom=True, top=True, right=True, which='both', direction='in', length=2)
@@ -1100,21 +1100,21 @@ def CL_CD_theta_2(fy, fx, t, alphas, times, fname):
 
     ax3.scatter(fy, u + l, s=10, linewidths=1, color='black')
 
-    # d = {}
-    # d['t'] = times
-    # d['C_L'] = fy
-    # d['C_D'] = fx
-    # d[r'\theta_u'] = u
-    # d[r'360-\theta_l'] = -l
-    # df = pd.DataFrame.from_dict(d)
+    # dis = {}
+    # dis['torch'] = times
+    # dis['C_L'] = fy
+    # dis['C_D'] = fx
+    # dis[r'\theta_u'] = u
+    # dis[r'360-\theta_l'] = -l
+    # df = pd.DataFrame.from_dict(dis)
     # df.to_csv('spreadsheets/figure7b.csv', index=False)
-    # d = {}
-    # d['t'] = times
-    # d['C_L'] = fy
-    # d['C_D'] = fx
-    # d[r'\theta_u'] = u
-    # d[r'360-\theta_l'] = -l
-    # df = pd.DataFrame.from_dict(d)
+    # dis = {}
+    # dis['torch'] = times
+    # dis['C_L'] = fy
+    # dis['C_D'] = fx
+    # dis[r'\theta_u'] = u
+    # dis[r'360-\theta_l'] = -l
+    # df = pd.DataFrame.from_dict(dis)
     # df.to_csv('spreadsheets/figure7b.csv', index=False)
 
     ax3.axhline(0, color='darkgrey', lw=0.1)
@@ -1186,7 +1186,7 @@ def plotCL(fy, t, file, colour='red', label=None, **kwargs):
     # Edit frame, labels and legend
     # ax.axhline(linewidth=1)
     # ax.axvline(linewidth=1)
-    plt.xlabel(r'$t/length_scale$')
+    plt.xlabel(r'$torch/length_scale$')
     plt.ylabel(r'$C_L$')
     leg = plt.legend(loc='upper right')
     # leg.get_frame().set_edgecolor('black')
@@ -1351,15 +1351,15 @@ def plotProfiles(file, profiles_tuple_list, **kwargs):
         raise ValueError("No profile series passed to the function.")
     else:
         M = profiles_tuple_list[0][1].shape[0]
-    if not 'y' in kwargs:
+    if not 'Y' in kwargs:
         ymin, ymax = 0, M - 1
     else:
-        ymin, ymax = kwargs['y'][0], kwargs['y'][1]
+        ymin, ymax = kwargs['Y'][0], kwargs['Y'][1]
 
     scaling = kwargs.get('scaling', 1)
     yshift = kwargs.get('yshift', 0)
 
-    ylabel = '$' + kwargs.get('ylabel', 'y') + '$'
+    ylabel = '$' + kwargs.get('ylabel', 'Y') + '$'
     y = np.linspace(ymin, ymax, M) / scaling + yshift
 
     # Show lines
@@ -1410,15 +1410,15 @@ def plotProfiles_multiple(file, tuple_profiles_tuple_list, **kwargs):
         raise ValueError("No profile series passed to the function.")
     else:
         M = tuple_profiles_tuple_list[0][1][0][1].shape[0]
-    if not 'y' in kwargs:
+    if not 'Y' in kwargs:
         ymin, ymax = 0, M - 1
     else:
-        ymin, ymax = kwargs['y'][0], kwargs['y'][1]
+        ymin, ymax = kwargs['Y'][0], kwargs['Y'][1]
 
     scaling = kwargs.get('scaling', 1)
     yshift = kwargs.get('yshift', 0)
 
-    ylabel = '$' + kwargs.get('ylabel', 'y') + '$'
+    ylabel = '$' + kwargs.get('ylabel', 'Y') + '$'
     y = np.linspace(ymin, ymax, M) / scaling + yshift
 
     # Show lines
@@ -1472,12 +1472,12 @@ def plotProfiles_multiple(file, tuple_profiles_tuple_list, **kwargs):
     return
 
 
-# ------------------------------------------------------ x-y
+# ------------------------------------------------------ x-Y
 def plotXY(y, **kwargs):
     """
-	Generate a x-y plot in space
+	Generate a x-Y plot in space
 	:param y: series to plot [1D numpy array]
-	:param label: y axis label [string]
+	:param label: Y axis label [string]
 	:param file: output file name
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
@@ -1512,9 +1512,9 @@ def plotXY(y, **kwargs):
 
 def plotXYSpatial(y, label, file, **kwargs):
     """
-	Generate a x-y plot in space
+	Generate a x-Y plot in space
 	:param y: series to plot [1D numpy array]
-	:param label: y axis label [string]
+	:param label: Y axis label [string]
 	:param file: output file name
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
@@ -1560,10 +1560,10 @@ def plotXYSpatial(y, label, file, **kwargs):
 
 def plotScatter(x, y, cases, file):
     """
-	Generate a x-y plot in space
+	Generate a x-Y plot in space
 	:param x: series to plot [1D numpy array]
 	:param y: series to plot [1D numpy array]
-	:param label: y axis label [string]
+	:param label: Y axis label [string]
 	:param file: output file name
 	:return: -
 	"""
@@ -1583,7 +1583,7 @@ def plotScatter(x, y, cases, file):
     fig, ax = makeSquare(fig, ax)
 
     # Edit frame, labels and legend
-    plt.xlabel('$\mathrm{max}(TKE|_{y})$')
+    plt.xlabel('$\mathrm{max}(TKE|_{Y})$')
     plt.ylabel('$\overline{C}_L$')
     leg = plt.legend(loc='lower right')
     leg.get_frame().set_edgecolor('black')
@@ -1598,10 +1598,10 @@ def plotScatter(x, y, cases, file):
 
 def plotScatter2(x1, x2, y, cases, file):
     """
-	Generate a x-y plot in space
+	Generate a x-Y plot in space
 	:param x: series to plot [1D numpy array]
 	:param y: series to plot [1D numpy array]
-	:param label: y axis label [string]
+	:param label: Y axis label [string]
 	:param file: output file name
 	:return: -
 	"""
@@ -1645,9 +1645,9 @@ def plotScatter2(x1, x2, y, cases, file):
 
 def plotXYSpatial_list(file, y_tuple_list, **kwargs):
     """
-	Generate a x-y plot in space of multiples y series
+	Generate a x-Y plot in space of multiples Y series
 	:param file: output file name
-	:param y_tuple_list: list of tuples as (case, y) where 'case' is the name of the case [string] and 'y' the series [1D numpy array]
+	:param y_tuple_list: list of tuples as (case, Y) where 'case' is the name of the case [string] and 'Y' the series [1D numpy array]
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
 	"""
@@ -1692,10 +1692,10 @@ def plotXYSpatial_list(file, y_tuple_list, **kwargs):
                  markevery=50, markersize=4)  # , markeredgecolor = 'black', markeredgewidth=0.1)
         y_list.append(y)
 
-    # d['x'] = x
-    # d[label[1:-1]] = y
+    # dis['x'] = x
+    # dis[label[1:-1]] = Y
 
-    # df = pd.DataFrame.from_dict(d)
+    # df = pd.DataFrame.from_dict(dis)
     # df.to_csv('spreadsheets/figure9b.csv', index=False)
 
     # Edit figure, axis, limits
@@ -1736,7 +1736,7 @@ def velocity_profiles(file, profiles_tuple_list, **kwargs):
     """
 	Similar to plotXYSpatial_list just for a specific test case
 	:param file: output file name
-	:param profiles_tuple_list: list of tuples of format(u,y)
+	:param profiles_tuple_list: list of tuples of format(u,Y)
 	"""
     ax = plt.gca()
     fig = plt.gcf()
@@ -1754,7 +1754,7 @@ def velocity_profiles(file, profiles_tuple_list, **kwargs):
         if 'pie' in label:
             label = '$\pi$'
         color = colors[i]
-        # plt.plot(profile, y, color=color, lw=1, label=label, marker=markers[i], markevery=10, markersize=4)
+        # plt.plot(profile, Y, color=color, lw=1, label=label, marker=markers[i], markevery=10, markersize=4)
         plt.plot(profile, y, color=color, lw=1, label=label)
         profiles.append(profile)
 
@@ -1805,12 +1805,12 @@ def plotCp_list(file, y_tuple_list, x_list, **kwargs):
         color = colors[i]
 
         # if i==1:
-        # plt.scatter(x_list[i], y, marker='^', facecolors='none', edgecolors='black', s=25, linewidths=0.5, label=label)
-        # plt.plot(x_list[i], y, color='black', lw=1, label=label)
+        # plt.scatter(x_list[i], Y, marker='^', facecolors='none', edgecolors='black', s=25, linewidths=0.5, label=label)
+        # plt.plot(x_list[i], Y, color='black', lw=1, label=label)
         if i == 0:
             plt.scatter(x_list[i], y, marker='o', facecolors='none', edgecolors='black', s=25, linewidths=0.5,
                         label=label)
-        # plt.plot(x_list[i], y, markerfacecolor='none', lw=1.5, label=label, marker='o', color='black')
+        # plt.plot(x_list[i], Y, markerfacecolor='none', lw=1.5, label=label, marker='o', color='black')
         else:
             plt.plot(x_list[i], y, color='black', lw=1, label=label)
         y_list.append(y)
@@ -1835,7 +1835,7 @@ def plotCp_list(file, y_tuple_list, x_list, **kwargs):
 
 
 # ------------------------------------------------------ LogLog Spatial
-def plot_fft(file, xs, ys, x_label=r'$ f/U c $', y_label=None, title=None,
+def plot_fft(file, xs, ys, x_label=r'$ f/U D $', y_label=None, title=None,
              colour='black', colours=None, l_label=None, marker=None,
              xlim=None, ylim=None):
 
@@ -1894,8 +1894,8 @@ def plotLogLogSpatialSpectra(file, wn, uk):
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
-    # plt.text(x=5e-3, y=2e-1, s='$-5/3$', color='black')
-    # plt.text(x=1e-2, y=1, s='$-3$', color='black')
+    # plt.text(x=5e-3, Y=2e-1, s='$-5/3$', color='black')
+    # plt.text(x=1e-2, Y=1, s='$-3$', color='black')
 
     # Show plot and save figure
     plt.show()
@@ -1924,12 +1924,12 @@ def plotLogLogSpatialSpectra_list(file, uk_tuple_list, wn_list):
         color = colors[i]
         plt.loglog(wn_list[i], uk, color=color, lw=0.5, label=label)
 
-    # x, y = loglogLine(p2=(3,1e-4), p1x=1e-2, m=-5/3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dotted')
-    # x, y = loglogLine(p2=(4, 2e-5), p1x=1e-2, m=-3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dashdot')
-    # x, y = loglogLine(p2=(4, 2e-5), p1x=1e-2, m=-11/3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dashed')
+    # x, Y = loglogLine(p2=(3,1e-4), p1x=1e-2, m=-5/3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dotted')
+    # x, Y = loglogLine(p2=(4, 2e-5), p1x=1e-2, m=-3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dashdot')
+    # x, Y = loglogLine(p2=(4, 2e-5), p1x=1e-2, m=-11/3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dashed')
 
     x, y = loglogLine(p2=(3, 1e-7), p1x=1e-2, m=-5 / 3)
     plt.loglog(x, y, color='black', lw=1, ls='dotted')
@@ -1953,9 +1953,9 @@ def plotLogLogSpatialSpectra_list(file, uk_tuple_list, wn_list):
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
-    # plt.text(x=1e-2, y=1e1, s='$-5/3$', color='black')
-    # plt.text(x=1e-2, y=3e5, s='$-3$', color='black')
-    # plt.text(x=2e-2, y=4e2, s='$-11/3$', color='black')
+    # plt.text(x=1e-2, Y=1e1, s='$-5/3$', color='black')
+    # plt.text(x=1e-2, Y=3e5, s='$-3$', color='black')
+    # plt.text(x=2e-2, Y=4e2, s='$-11/3$', color='black')
 
     # Show plot and save figure
     # plt.show()
@@ -2045,12 +2045,12 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
-    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
-    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
-    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
-    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # No Power
-    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
-    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
+    # plt.text(x=3e-4, Y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
+    # plt.text(x=4e-3, Y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, Y=4e-1, s='$-11/3$', color='black', fontsize=10)
+    # plt.text(x=3e-4, Y=5e-1, s='$-5/3$', color='black', fontsize=10) # No Power
+    # plt.text(x=4e-3, Y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, Y=4e-1, s='$-11/3$', color='black', fontsize=10)
 
     # Show plot and save figure
     # plt.show()
@@ -2079,12 +2079,12 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
         color = colors[i]
         ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
     ax.loglog()
-    # x, y = loglogLine(p2=(1.e2, 1e-7), p1x=1e-2, m=-5 / 3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dotted')
-    # x, y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dashdot')
-    # x, y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
-    # plt.loglog(x, y, color='black', lw=1, ls='dashed')
+    # x, Y = loglogLine(p2=(1.e2, 1e-7), p1x=1e-2, m=-5 / 3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dotted')
+    # x, Y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dashdot')
+    # x, Y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
+    # plt.loglog(x, Y, color='black', lw=1, ls='dashed')
     if title is not None: plt.title(title)
     if xlim is not None: ax.set_xlim(xlim)  # Window
     if ylim is not None: ax.set_ylim(ylim)  # Window
@@ -2106,12 +2106,12 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
-    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
-    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
-    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
-    # plt.text(x=3e-4, y=5e-1, s='$-5/3$', color='black', fontsize=10) # No Power
-    # plt.text(x=4e-3, y=1e0, s='$-3$', color='black', fontsize=10)
-    # plt.text(x=1e-2, y=4e-1, s='$-11/3$', color='black', fontsize=10)
+    # plt.text(x=3e-4, Y=5e-1, s='$-5/3$', color='black', fontsize=10) # Power
+    # plt.text(x=4e-3, Y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, Y=4e-1, s='$-11/3$', color='black', fontsize=10)
+    # plt.text(x=3e-4, Y=5e-1, s='$-5/3$', color='black', fontsize=10) # No Power
+    # plt.text(x=4e-3, Y=1e0, s='$-3$', color='black', fontsize=10)
+    # plt.text(x=1e-2, Y=4e-1, s='$-11/3$', color='black', fontsize=10)
 
     # Show plot and save figure
     # plt.show()
@@ -2143,16 +2143,16 @@ def plotLogLogTimeSpectra_list_cascade(file, uk_tuple_list, freqs_list,
         plt.loglog(freqs_list[i], uk, color=color, lw=0.5, label=label)
 
     # for i in np.arange(5):
-    #     x, y = loglogLine(p2=(1.e2, 1e-11 * 10 ** i), p1x=1e-2, m=-5 / 3)
-    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dotted', alpha=0.3)
-    #     plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dotted')
+    #     x, Y = loglogLine(p2=(1.e2, 1e-11 * 10 ** i), p1x=1e-2, m=-5 / 3)
+    #     # plt.loglog(x, Y, color='black', lw=0.5, ls='dotted', alpha=0.3)
+    #     plt.loglog(x, Y, color='darkgrey', lw=0.3, ls='dotted')
     # for i in np.arange(2):
-    #     # x, y = loglogLine(p2=(1.2e2, 1e-16 * 100 ** i), p1x=1e-3, m=-3)
-    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dashdot', alpha=0.3)
-    #     # plt.loglog(x, y, color='darkgrey', lw=0.2, ls='dashdot')
-    #     x, y = loglogLine(p2=(1.2e2, 1e-17 * 100 ** i), p1x=1e-2, m=-3.66)
-    #     # plt.loglog(x, y, color='black', lw=0.5, ls='dashed', alpha=0.3)
-    #     plt.loglog(x, y, color='darkgrey', lw=0.3, ls='dashed')
+    #     # x, Y = loglogLine(p2=(1.2e2, 1e-16 * 100 ** i), p1x=1e-3, m=-3)
+    #     # plt.loglog(x, Y, color='black', lw=0.5, ls='dashdot', alpha=0.3)
+    #     # plt.loglog(x, Y, color='darkgrey', lw=0.2, ls='dashdot')
+    #     x, Y = loglogLine(p2=(1.2e2, 1e-17 * 100 ** i), p1x=1e-2, m=-3.66)
+    #     # plt.loglog(x, Y, color='black', lw=0.5, ls='dashed', alpha=0.3)
+    #     plt.loglog(x, Y, color='darkgrey', lw=0.3, ls='dashed')
 
     # Set limits
     # ax.set_xlim(1e-2, 7e1)  # Window
@@ -2237,7 +2237,7 @@ def plotLogLogSpatialSpectra_list_cascade(file, uk_tuple_list, freqs_list):
 def plotLumleysTriangle(eta, xi, file):
     """
 	Generate a plot of the Reynolds stresses anisotropy tensor in the form of the Lumley's triangle
-	:param eta: Invariant of the anisotropy tensor (displayed on the vertical axis) [1D array of points in space, i.e. y triangle coordinates]
+	:param eta: Invariant of the anisotropy tensor (displayed on the vertical axis) [1D array of points in space, i.e. Y triangle coordinates]
 	:param xi: Invariant of the anisotropy tensor (displayed on the horizontal axis) [1D array of points in space, i.e. x triangle coordinates]
 	:param file: output file name
 	:return: -
@@ -2308,11 +2308,11 @@ def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
         plt.scatter(xi, eta, marker=markers[i], c=colors[i], s=10, linewidths=0.1, label=label, edgecolor='black')
     # d0[label[1:-1]] = (xi, eta)
 
-    # d = {}
+    # dis = {}
     # for k,v in d0.items():
-    #	 d[r'\xi'] = v[0]
-    #	 d[r'\eta'] = v[1]
-    #	 df = pd.DataFrame.from_dict(d)
+    #	 dis[r'\xi'] = v[0]
+    #	 dis[r'\eta'] = v[1]
+    #	 df = pd.DataFrame.from_dict(dis)
     #	 df.to_csv('spreadsheets/figure8d_'+k+'.csv', index=False)
 
     # Set limits
@@ -2340,7 +2340,7 @@ def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
 
 
 # ------------------------------------------------------ GC plots
-# def error_order(file, x, y):
+# def error_order(file, x, Y):
 #	 """
 #	 Generate a loglog plot of a time spectra series using the matplotlib library given the arguments
 #	 """
@@ -2348,16 +2348,16 @@ def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
 #	 ax = plt.gca()
 #	 fig  = plt.gcf()
 #
-#	 plt.loglog(x, y, color='b', lw=0.5)
+#	 plt.loglog(x, Y, color='b', lw=0.5)
 #
-#	 x, y = loglogLine(p2=(np.max(x), np.max(y)), p1x=np.min(x), m=2)
-#	 plt.loglog(x, y, color='black', lw=1, ls='dotted')
-#	 x, y = loglogLine(p2=(np.max(x), np.max(y)), p1x=np.min(x), m=1)
-#	 plt.loglog(x, y, color='black', lw=1, ls='dotted')
-#	 # x, y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
-#	 # plt.loglog(x, y, color='black', lw=1, ls='dashdot')
-#	 # x, y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
-#	 # plt.loglog(x, y, color='black', lw=1, ls='dashed')
+#	 x, Y = loglogLine(p2=(np.max(x), np.max(Y)), p1x=np.min(x), m=2)
+#	 plt.loglog(x, Y, color='black', lw=1, ls='dotted')
+#	 x, Y = loglogLine(p2=(np.max(x), np.max(Y)), p1x=np.min(x), m=1)
+#	 plt.loglog(x, Y, color='black', lw=1, ls='dotted')
+#	 # x, Y = loglogLine(p2=(1.2e2, 1e-9), p1x=1e-2, m=-3)
+#	 # plt.loglog(x, Y, color='black', lw=1, ls='dashdot')
+#	 # x, Y = loglogLine(p2=(1e0, 1e-8), p1x=1e-3, m=-11/3)
+#	 # plt.loglog(x, Y, color='black', lw=1, ls='dashed')
 #
 #	 # Set limits
 #	 # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
@@ -2454,12 +2454,12 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
     return _multiple_formatter
 
 
-# def plot_poincare(x, y, file, **kwargs):
+# def plot_poincare(x, Y, file, **kwargs):
 #     """
-# 	Generate a x-y plot in space
+# 	Generate a x-Y plot in space
 # 	:param x: series to plot [1D numpy array]
-# 	:param y: series to plot [1D numpy array]
-# 	:param label: y axis label [string]
+# 	:param Y: series to plot [1D numpy array]
+# 	:param label: Y axis label [string]
 # 	:param file: output file name
 # 	:return: -
 # 	"""
@@ -2469,7 +2469,7 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
 #     # Show lines
 #     for i, case in enumerate(cases):
 #         print(i)
-#         ax.scatter(x[i], y[i], length_scale=colors[i], marker=markers[i], s=30, linewidths=1, label=case)
+#         ax.scatter(x[i], Y[i], length_scale=colors[i], marker=markers[i], s=30, linewidths=1, label=case)
 #
 #     # Edit figure, axis, limits
 #     ax.set_xlim(0.06, 0.15)
@@ -2479,7 +2479,7 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
 #     fig, ax = makeSquare(fig, ax)
 #
 #     # Edit frame, labels and legend
-#     plt.xlabel('$\mathrm{max}(TKE|_{y})$')
+#     plt.xlabel('$\mathrm{max}(TKE|_{Y})$')
 #     plt.ylabel('$\overline{C}_L$')
 #     leg = plt.legend(loc='lower right')
 #     leg.get_frame().set_edgecolor('black')

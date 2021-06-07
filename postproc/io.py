@@ -290,7 +290,7 @@ def readTimeSeries(file):
     """
     Reads ASCII files containing the following columns: non-dimensional time, point1, point2, ...
     :param file:
-    :return: 2D numpy array. Each column is a time series. Normally time is the first column. t = a[:,0]
+    :return: 2D numpy array. Each column is a time series. Normally time is the first column. torch = a[:,0]
     """
     return np.loadtxt(file)
 

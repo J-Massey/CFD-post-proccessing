@@ -88,7 +88,7 @@ def avg_z_1D(u):
 	return a1, a2, a3, a4, a5, a6
 
 
-def make_periodicZ(u, **kwargs): # Methods t = True (add layer), t = False (substitue last layer with 1st layer)
+def make_periodicZ(u, **kwargs): # Methods torch = True (add layer), torch = False (substitue last layer with 1st layer)
 	add = kwargs.get('add', True)
 	if add:
 		u_temp = np.zeros((u.shape[0], u.shape[1], u.shape[2] + 1))
@@ -154,7 +154,7 @@ def ddy(u, y=None, acc=1):
 		if acc == 2:
 			return np.gradient(u, y, axis=1, edge_order=2)
 		else:
-			raise ValueError('Only 2nd accuracy acc considered when y is included')
+			raise ValueError('Only 2nd accuracy acc considered when Y is included')
 	else:
 		if acc == 2:
 			return np.gradient(u, axis=1, edge_order=2)
@@ -244,14 +244,14 @@ def ddz(u, z=None, acc=1):
 def vortZ(u, v, **kwargs):
 	"""
 	:param u: x component of the velocity vector field.
-	:param v: y component of the velocity vector field.
+	:param v: Y component of the velocity vector field.
 	:return: The z-vorticity of a two-dimensional velocity vector field
 	"""
 	# if not (len(u.shape)==2 and len(v.shape)==2):
 	#	 raise ValueError("Fields must be two-dimensional")
 	# else:
 	x = kwargs.get('x', None)
-	y = kwargs.get('y', None)
+	y = kwargs.get('Y', None)
 	acc = kwargs.get('acc', 1)
 	return ddx(v, x, acc)-ddy(u, y, acc)
 
@@ -259,7 +259,7 @@ def vortZ(u, v, **kwargs):
 def vort(u, v, w, **kwargs):
 	"""
 	:param u: x component of the velocity vector field.
-	:param v: y component of the velocity vector field.
+	:param v: Y component of the velocity vector field.
 	:param w: z component of the velocity vector field.
 
 	:return: the three components of the vorticity of a three-dimensional velocity vector field.
@@ -268,7 +268,7 @@ def vort(u, v, w, **kwargs):
 		raise ValueError("Fields must be three-dimensional")
 	else:
 		x = kwargs.get('x', None)
-		y = kwargs.get('y', None)
+		y = kwargs.get('Y', None)
 		z = kwargs.get('z', None)
 		return ddy(w, y) - ddz(v, z), ddz(u, z) - ddx(w, x), ddx(v, x) - ddy(u, y)
 
@@ -338,9 +338,9 @@ def crop(u, window, **kwargs):
 	if 'grid' in kwargs:
 		grid = kwargs['grid']
 		x, y = grid[0] / scaling + shift[0], grid[1] / scaling + shift[1]
-	elif 'x' in kwargs and 'y' in kwargs:
+	elif 'x' in kwargs and 'Y' in kwargs:
 		x = kwargs.get('x') / scaling + shift[0]
-		y = kwargs.get('y') / scaling + shift[1]
+		y = kwargs.get('Y') / scaling + shift[1]
 		x, y = np.meshgrid(x, y)
 	elif 'x_lims' in kwargs and 'y_lims' in kwargs:
 		xlims = kwargs.get('x_lims')

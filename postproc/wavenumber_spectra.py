@@ -39,7 +39,7 @@ def scalar_spectra(a, *args, **kwargs):
 	Computes the wavenumber spectra of a n-dimensional scalar field by means of nFFT. The spectra is for the wavenumber
 	modulus of ak. Hence it performs and spherical integration for all the components of k_i (the wavenumber vector)
 	:param a: The scalar field
-	:param args: The spatial vector x_i = (x, y, z)
+	:param args: The spatial vector x_i = (x, Y, z)
 	:param kwargs: k_res for the resolution of k_mod_line which defines the bandwitdh dk.
 	:return: k_mod 1D array and ak_integral 1D array.
 	"""
@@ -96,7 +96,7 @@ def _pair_integrate_fast(ak, *args, **kwargs):
 def _wavenumbers(*args):
 	"""
 	:param args: the wavenumber vector *k_i
-	:return: the wavenumber vector for a position vector (1D, 2D or 3D) such as: x, y, z of a uniform grid.
+	:return: the wavenumber vector for a position vector (1D, 2D or 3D) such as: x, Y, z of a uniform grid.
 	"""
 	k_i = () # wavenumber vector; k_i = (kx, ky, kz). Each component is a 1D array type.
 	for arg in args:

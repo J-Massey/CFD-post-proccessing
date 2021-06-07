@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 def check_size(x):
     if len(x.size()) == 2:
-        # (n, d) --> (n, 1, d)
+        # (n, dis) --> (n, 1, dis)
         x = x.unsqueeze(1)
 
     return x
@@ -49,9 +49,9 @@ def plot_gmm(data, y, file, x_label, y_label, title=None, alpha=1., colours=None
 class GaussianMixture(torch.nn.Module):
     """
     Fits a mixture of k=1,..,K Gaussians to the input dat (K is supplied via n_components).
-    Input tensors are expected to be flat with dimensions (n: number of samples, d: number of features).
-    The model then extends them to (n, 1, d).
-    The model parametrization (mu, sigma) is stored as (1, k, d), and probabilities are shaped (n, k, 1) if they
+    Input tensors are expected to be flat with dimensions (n: number of samples, dis: number of features).
+    The model then extends them to (n, 1, dis).
+    The model parametrization (mu, sigma) is stored as (1, k, dis), and probabilities are shaped (n, k, 1) if they
     relate to an individual sample, or (1, k, 1) if they assign membership probabilities to one of the mixture
     components.
     """
@@ -59,11 +59,11 @@ class GaussianMixture(torch.nn.Module):
     def __init__(self, n_components, n_features, mu_init=None, var_init=None, eps=1.e-6):
         """
         Initializes the model and brings all tensors into their required shape.
-        The class expects dat to be fed as a flat tensor in (n, d).
+        The class expects dat to be fed as a flat tensor in (n, dis).
         The class owns:
-            x:              torch.Tensor (n, 1, d)
-            mu:             torch.Tensor (1, k, d)
-            var:            torch.Tensor (1, k, d)
+            x:              torch.Tensor (n, 1, dis)
+            mu:             torch.Tensor (1, k, dis)
+            var:            torch.Tensor (1, k, dis)
             pie:            torch.Tensor (1, k, 1)
             eps:            float
             n_components:   int
@@ -73,8 +73,8 @@ class GaussianMixture(torch.nn.Module):
             n_components:   int
             n_features:     int
         options:
-            mu_init:        torch.Tensor (1, k, d)
-            var_init:       torch.Tensor (1, k, d)
+            mu_init:        torch.Tensor (1, k, dis)
+            var_init:       torch.Tensor (1, k, dis)
             eps:            float
         """
         super(GaussianMixture, self).__init__()
@@ -96,7 +96,7 @@ class GaussianMixture(torch.nn.Module):
             assert self.mu_init.size() == (1, self.n_components, self.n_features), \
                 "Input mu_init does not have required tensor dimensions (1, %i, %i)" \
                 % (self.n_components, self.n_features)
-            # (1, k, d)
+            # (1, k, dis)
             self.mu = torch.nn.Parameter(self.mu_init, requires_grad=False)
         else:
             self.mu = torch.nn.Parameter(torch.randn(1, self.n_components, self.n_features), requires_grad=False)
@@ -105,7 +105,7 @@ class GaussianMixture(torch.nn.Module):
             assert self.var_init.size() == (1, self.n_components, self.n_features), \
                 "Input var_init does not have required tensor dimensions (1, %i, %i)" \
                 % (self.n_components, self.n_features)
-            # (1, k, d)
+            # (1, k, dis)
             self.var = torch.nn.Parameter(self.var_init, requires_grad=False)
         else:
             self.var = torch.nn.Parameter(torch.ones(1, self.n_components, self.n_features), requires_grad=False)
@@ -120,7 +120,7 @@ class GaussianMixture(torch.nn.Module):
         """
         Bayesian information criterion for a batch of samples.
         args:
-            x:      torch.Tensor (n, d) or (n, 1, d)
+            x:      torch.Tensor (n, dis) or (n, 1, dis)
         returns:
             bic:    float
         """
@@ -138,7 +138,7 @@ class GaussianMixture(torch.nn.Module):
         """
         Fits model to the dat.
         args:
-            x:          torch.Tensor (n, d) or (n, k, d)
+            x:          torch.Tensor (n, dis) or (n, k, dis)
         options:
             delta:      float
             n_iter:     int
@@ -182,12 +182,12 @@ class GaussianMixture(torch.nn.Module):
         Assigns input dat to one of the mixture components by evaluating the likelihood under each.
         If probs=True returns normalized probabilities of class membership.
         args:
-            x:          torch.Tensor (n, d) or (n, 1, d)
+            x:          torch.Tensor (n, dis) or (n, 1, dis)
             probs:      bool
         returns:
             p_k:        torch.Tensor (n, k)
             (or)
-            y:          torch.LongTensor (n)
+            Y:          torch.LongTensor (n)
         """
         x = check_size(x)
 
@@ -203,9 +203,9 @@ class GaussianMixture(torch.nn.Module):
         """
         Returns normalized probabilities of class membership.
         args:
-            x:          torch.Tensor (n, d) or (n, 1, d)
+            x:          torch.Tensor (n, dis) or (n, 1, dis)
         returns:
-            y:          torch.LongTensor (n)
+            Y:          torch.LongTensor (n)
         """
         return self.predict(x, probs=True)
 
@@ -213,7 +213,7 @@ class GaussianMixture(torch.nn.Module):
         """
         Computes log-likelihood of samples under the current model.
         args:
-            x:          torch.Tensor (n, d) or (n, 1, d)
+            x:          torch.Tensor (n, dis) or (n, 1, dis)
         returns:
             score:      torch.LongTensor (n)
         """
@@ -225,7 +225,7 @@ class GaussianMixture(torch.nn.Module):
     def _estimate_log_prob(self, x):
         """
         Returns a tensor with dimensions (n, k, 1), which indicates the log-likelihood that samples belong to the
-        k-th Gaussian. args: x:            torch.Tensor (n, d) or (n, 1, d) returns: log_prob:     torch.Tensor (n,
+        k-th Gaussian. args: x:            torch.Tensor (n, dis) or (n, 1, dis) returns: log_prob:     torch.Tensor (n,
         k, 1)
         """
         x = check_size(x)
@@ -243,7 +243,7 @@ class GaussianMixture(torch.nn.Module):
         Computes log-responses that indicate the (logarithmic) posterior belief (sometimes called responsibilities)
         that a dat point was generated by one of the k mixture components. Also returns the mean of the mean of the
         logarithms of the probabilities (as is done in sklearn). This is the so-called expectation step of the
-        EM-algorithm. args: x:              torch.Tensor (n,d) or (n, 1, d) returns: log_prob_norm:  torch.Tensor (1)
+        EM-algorithm. args: x:              torch.Tensor (n,dis) or (n, 1, dis) returns: log_prob_norm:  torch.Tensor (1)
         log_resp:       torch.Tensor (n, k, 1)
         """
         x = check_size(x)
@@ -258,9 +258,9 @@ class GaussianMixture(torch.nn.Module):
     def _m_step(self, x, log_resp):
         """
         From the log-probabilities, computes new parameters pie, mu, var (that maximize the log-likelihood). This is
-        the maximization step of the EM-algorithm. args: x:          torch.Tensor (n, d) or (n, 1, d) log_resp:
+        the maximization step of the EM-algorithm. args: x:          torch.Tensor (n, dis) or (n, 1, dis) log_resp:
         torch.Tensor (n, k, 1) returns: pie:         torch.Tensor (1, k, 1) mu:         torch.Tensor (1, k,
-        d) var:        torch.Tensor (1, k, d)
+        dis) var:        torch.Tensor (1, k, dis)
         """
         x = check_size(x)
 
@@ -282,7 +282,7 @@ class GaussianMixture(torch.nn.Module):
         """
         Performs one iteration of the expectation-maximization algorithm by calling the respective subroutines.
         args:
-            x:          torch.Tensor (n, 1, d)
+            x:          torch.Tensor (n, 1, dis)
         """
         _, log_resp = self._e_step(x)
         pie, mu, var = self._m_step(x, log_resp)
@@ -295,7 +295,7 @@ class GaussianMixture(torch.nn.Module):
         """
         Computes the log-likelihood of the dat under the model.
         args:
-            x:                  torch.Tensor (n, 1, d)
+            x:                  torch.Tensor (n, 1, dis)
             sum_data:           bool
         returns:
             score:              torch.Tensor (1)
