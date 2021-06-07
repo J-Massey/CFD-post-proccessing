@@ -27,7 +27,7 @@ p = np.squeeze(data[1])
 x, y, z = data[2]
 print(np.shape(x))
 # x = x[-2 * length_scale: 2 * length_scale]
-# y = y[-2 * length_scale: 2 * length_scale]
+# Y = Y[-2 * length_scale: 2 * length_scale]
 X, Y = np.meshgrid(x/D, y/D)
 
 fig, ax = plt.subplots(figsize=(7, 5))
@@ -42,7 +42,7 @@ plt.title(r'$ \overline{u} $')
 
 plt.savefig('u.png', dpi=700)
 
-# plotter.plot_2D(np.transpose(vort), cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], y=[ymin,ymax])
+# plotter.plot_2D(np.transpose(vort), cmap='bwr', lvls=100, lim=[-0.15, 0.15], file='vort.pdf', x=[xmin,xmax], Y=[ymin,ymax])
 
 
 # fname = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/eps-1/3D/datp/flu2d.3.pvtr'

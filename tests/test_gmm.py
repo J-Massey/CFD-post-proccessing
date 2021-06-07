@@ -14,9 +14,9 @@ def test_em_matches_sklearn():
     d = 20
     n_components = np.random.randint(1, 100)
 
-    # (n, k, d)
+    # (n, k, dis)
     x = torch.randn(40, 1, d)
-    # (n, d)
+    # (n, dis)
     x_np = np.squeeze(x.data.numpy())
 
     var_init = torch.ones(1, n_components, d) - .4
