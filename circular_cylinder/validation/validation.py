@@ -22,15 +22,19 @@ plt.style.use(['science', 'grid'])
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/validation/d-96/'
 
-files = ['eps-1_2', 'eps-1', 'eps-2']
-eps = [0.5, 1, 2]
-D = 96
-colors = sns.color_palette("husl", len(files))
+# What are the folder names of the simulations
+files = ['16', '24', '32', '48', '64', '96']
+# files = ['dis-96', 'dis-128']
+
+# Length scales we are comparing
+D = [16, 24, 32, 48, 64, 96]
+colors = sns.color_palette("husl", len(D))
 
 # Path to  where we printed the mean forces
-force_file = '3D/fort.9'
+force_file = 'fort.9'
+
 names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 
 # What's the name and label of the thing we're interested in?
@@ -43,21 +47,23 @@ angled_dic_f = [[] for _ in range(n_angles)]
 angled_dic_uk = [[] for _ in range(n_angles)]
 
 fig1, ax1 = plt.subplots(figsize=(7, 5))
-ax1.set_xlabel(r"$torch/length_scale$")
+ax1.set_xlabel(r"$t/length_scale$")
 ax1.set_ylabel(r"$\sqrt{u^{\prime^{2}}+v^{\prime^{2}}}$")
 
 for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     # Unpack mean forces
     fos = (postproc.io.unpack_flex_forces(os.path.join(data_root, fn, force_file), names))
     forces_dic = dict(zip(names, fos))
-    t_min = min(forces_dic['torch'])
-    t_max = max(forces_dic['torch'])
-    t = forces_dic['torch']
+    t_min = min(forces_dic['t'])
+    t_max = max(forces_dic['t'])
+    t = forces_dic['t']
+
+    res = 128
     # Get the profiles
     data = ProfileDataset(os.path.join(data_root, fn, '3D'), True)
 
     # Turn single point value extracted from profile into rms fluctuation
-    rs, azis = data.bl_value(single_point=True, position=0.6, length_scale=96, print_res=256, print_len=3)
+    rs, azis = data.bl_value(single_point=True, position=0.1, length_scale=D[idx], print_res=res, print_len=3)
     angles = data.angles
 
     rs = torch.tensor(rs, device=device)
@@ -68,7 +74,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     instant_tke = (0.5 * (r_dash ** 2 + azi_dash ** 2)).cpu().numpy()
 
     ti = t[0:len(instant_tke[0])]
-    ax1.plot(ti, instant_tke[0], color=colors[idx], label=r'$ \epsilon = $' + str(eps[idx]))
+    ax1.plot(ti, instant_tke[0], color=colors[idx], label=f"length_scale = ${D[idx]}$")
 
     for idx1, loop in tqdm(enumerate(instant_tke), desc='Spectra', ascii=True):
         # Define how many cycles to drop to allow the flow to initialise from 2D to 3D
@@ -79,7 +85,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
         criteria = postproc.frequency_spectra.FreqConv(t=ti[ti > late], u=loop[ti > late], n=n, OL=0.5)
         f, uk = criteria.welch()
         angled_dic_f[idx1].append(f)
-        angled_dic_uk[idx1].append((r'$ \epsilon = $' + str(eps[idx]), uk))
+        angled_dic_uk[idx1].append((f"length_scale = ${D[idx]}$", uk))
 
 plt.legend()
 fig1.savefig(data_root + f"figures/time_series_tke.png", bbox_inches='tight', dpi=600, transparent=False)

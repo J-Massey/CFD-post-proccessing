@@ -36,13 +36,13 @@ def main():
 
     xs = []; ys = []
     for idx, case in enumerate(t_comparisons):
-        xs.append((ProfileDataset(data_root_t+case).bl_poincare_limit(single_point=True,length_scale=32))[0])
-        ys.append((ProfileDataset(data_root_t+case).bl_poincare_limit(single_point=True,length_scale=32))[1])
+        xs.append((ProfileDataset(data_root_t+case).bl_value(single_point=True, length_scale=32))[0])
+        ys.append((ProfileDataset(data_root_t+case).bl_value(single_point=True, length_scale=32))[1])
         angles = ProfileDataset(data_root_t+case).angles
         print(f"Test angles: {[round(a, 2) for a in angles]}")
 
     colours = ['red', 'green', 'blue', 'purple', 'orange', 'magenta', 'black']
-    labels = [r"$ 100 \leq t \leq 500 $"]
+    labels = [r"$ 100 \leq torch \leq 500 $"]
     for idx in range(len(xs[0])):
         for case,(x,y) in enumerate(zip(xs,ys)):
             # Plot part of the t_100 case
@@ -58,13 +58,13 @@ def main():
             y = model.predict(data)
             likelihood = model.score_samples(data).cpu().numpy()
 
-            # gmm.plot_gmm(dat.cpu(), y.cpu(),
+            # gmm.plot_gmm(dat.cpu(), Y.cpu(),
             #             y_label=r"$ \theta $", x_label=r"$ r $", label=['3D','2D'],
             #             file=data_root_t+f"figures/group_{idx}.svg",
             #             tit=f"$ {round(angles[idx], 2)}^r $ from the front",
             #             colours=colours)
             # plotter.simple_plot(*pow_spec, l_label=labels[:len(xs)],
-            #             y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ t/length_scale $", colour=colours[case],
+            #             y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ torch/length_scale $", colour=colours[case],
             #             colours=colours[:len(xs)], tit=f"$ {round(angles[idx], 2)}^r $ from the front",
             #             file=data_root_t+f"figures/pow_spec_{idx}.svg")
 
@@ -87,13 +87,13 @@ if __name__ == "__main__":
     main()
 
 
-# labels = [r"$ 160 \leq t \leq 200 $", r"$ 200 \leq t \leq 400 $", r"$ 400 \leq t \leq 600 $"]
+# labels = [r"$ 160 \leq torch \leq 200 $", r"$ 200 \leq torch \leq 400 $", r"$ 400 \leq torch \leq 600 $"]
 # colours = ['red', 'green', 'blue','yellow']
 # for idx in range(len(xs[0])):
-#     for case,(x,y) in enumerate(zip(xs,ys)):
+#     for case,(x,Y) in enumerate(zip(xs,ys)):
 #         # Flot top half of the t_100 case
 #         fifty=int(30*len(x[idx])/100)
-#         plot_poincare(x[idx][fifty:-1], y[idx][fifty:-1], file=data_root_t+f"full_30_{idx}.svg", y_label=r"$ \theta $", x_label=r"$ r $",\
+#         plot_poincare(x[idx][fifty:-1], Y[idx][fifty:-1], file=data_root_t+f"full_30_{idx}.svg", y_label=r"$ \theta $", x_label=r"$ r $",\
 #             tit=f"$ {round(angles[idx], 2)}^r $ from the front", alpha=0.4, color=colours[case], colours=colours[:len(xs)], label=labels)
 #     plt.close()
 

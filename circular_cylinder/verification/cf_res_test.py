@@ -25,8 +25,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/res_test/'
 
 # What are the folder names of the simulations
-files = ['d-32', 'd-48', 'd-64', 'd-96', 'd-128']
-# files = ['d-96', 'd-128']
+files = ['dis-32', 'dis-48', 'dis-64', 'dis-96', 'dis-128']
+# files = ['dis-96', 'dis-128']
 
 # Length scales we are comparing
 D = [32, 48, 64, 96, 128]
@@ -35,7 +35,7 @@ colors = sns.color_palette("husl", len(D))
 
 # Path to  where we printed the mean forces
 force_file = '3D/fort.9'
-names = ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
+names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
 
 # What's the name and label of the thing we're interested in?
 interest = 'rms'
@@ -47,18 +47,18 @@ angled_dic_cd = [[] for _ in range(n_angles)]
 angled_dic_cl = [[] for _ in range(n_angles)]
 
 fig1, ax1 = plt.subplots(figsize=(7, 5))
-ax1.set_xlabel(r"$t/length_scale$")
+ax1.set_xlabel(r"$torch/length_scale$")
 ax1.set_ylabel(r"$C_{D_{f}}$")
 
 for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     # Unpack mean forces
     fos = (postproc.io.unpack_flex_forces(os.path.join(data_root, fn, force_file), names))
     forces_dic = dict(zip(names, fos))
-    t_min = min(forces_dic['t'])
-    t_max = max(forces_dic['t'])
-    t = forces_dic['t']
+    t_min = min(forces_dic['torch'])
+    t_max = max(forces_dic['torch'])
+    t = forces_dic['torch']
 
-    # Wasn't consistent with print res so correct for this
+    # Wasn'torch consistent with print res so correct for this
     if D[idx] <= 64:
         res = 128
     else:

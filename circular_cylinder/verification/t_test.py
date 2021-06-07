@@ -36,8 +36,8 @@ data_root_t = '/home/masseyjmo/Workspace/Lotus/projects/cf_lotus/ml/real_profile
 
 xs = []; ys = [];
 for idx,case in enumerate(t_comparisons):
-    xs.append((ProfileDataset(data_root_t+case).bl_poincare_limit(single_point=True,length_scale=32))[0])
-    ys.append((ProfileDataset(data_root_t+case).bl_poincare_limit(single_point=True,length_scale=32))[1])
+    xs.append((ProfileDataset(data_root_t+case).bl_value(single_point=True, length_scale=32))[0])
+    ys.append((ProfileDataset(data_root_t+case).bl_value(single_point=True, length_scale=32))[1])
     angles = ProfileDataset(data_root_t+case).angles
     print(f"Test angles: {[round(a, 2) for a in angles]}")
 # %%
@@ -67,7 +67,7 @@ for idx in range(len(xs[0])):
         y = model.predict(data)
         likelihood = model.score_samples(data).cpu().numpy()
 
-        # postproc.gmm.plot_gmm(dat.cpu(), y.cpu(),
+        # postproc.gmm.plot_gmm(dat.cpu(), Y.cpu(),
         #             y_label=r"$ \theta $", x_label=r"$ r $", label=['3D','2D'],
         #             file=data_root_t+f"figures/group_{idx}.svg",
         #             tit=f"$ {round(angles[idx], 2)}^r $ from the front",
@@ -85,9 +85,9 @@ for idx in range(len(xs[0])):
 
 
         # for loop in range(1,8):
-        #     window = postproc.frequency_spectra._window(loop * t / n)
+        #     window = postproc.frequency_spectra._window(loop * torch / n)
         #
-        #     # pow_spec = postproc.frequency_spectra.freq_spectra_Welch(t[:int(loop*len(t)/5)],likelihood[:int(loop*len(t)/5)])
+        #     # pow_spec = postproc.frequency_spectra.freq_spectra_Welch(torch[:int(loop*len(torch)/5)],likelihood[:int(loop*len(torch)/5)])
         #
         #     postproc.plotter.simple_plot(*pow_spec,
         #                 y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/length_scale $", colour=colours[loop-1],

@@ -20,7 +20,7 @@ plt.style.use(['science', 'grid'])
 
 data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/sims/eps_test/'
 force_file = '3D/fort.9'
-names = ['t', 'dt', 'angle', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z', 'vforcex', 'vforcey']
+names = ['torch', 'dt', 'angle', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z', 'vforcex', 'vforcey']
 interest = 'vforcex'
 label = r'$ C_{D_{f}} $'
 
@@ -39,12 +39,12 @@ uks = []
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r"$t/length_scale$")
+ax1.set_xlabel(r"$torch/length_scale$")
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(files), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, files[idx], force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t'], forces_dic[interest]
+    t, u = forces_dic['torch'], forces_dic[interest]
     t = t - np.min(t)
     t, u = t[t < snip], u[t < snip]
     t, u = t[t > init], u[t > init]
