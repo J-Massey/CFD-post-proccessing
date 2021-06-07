@@ -26,7 +26,7 @@ This repository contains the ``postproc`` package provided with the following to
 
 To install this package in your workstation you only need ``git`` and ``pip3``. To install the `postproc` package run:
 
-	git clone https://github.com/b-fg/postproc.git
+	git clone https://github.com/J-Massey/postproc.git
 	cd postproc
 	sudo pip3 install -e .
 
