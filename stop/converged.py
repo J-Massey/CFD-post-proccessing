@@ -36,7 +36,7 @@ def _plot_ts(ti, f):
     ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
     # Edit frame, labels and legend
-    ax1.set_xlabel(r"$t/length_scale$")
+    ax1.set_xlabel(r"$torch/length_scale$")
     ax1.set_ylabel(f"${sys.argv[2]}$")
 
     ax1.plot(t, u, c='r')
@@ -60,7 +60,7 @@ def _plot_err(ti, e):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 
     # Edit frame, labels and legend
-    ax.set_xlabel(r"$t/length_scale$")
+    ax.set_xlabel(r"$torch/length_scale$")
     ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
     ax.plot(ti, e, c='r')
@@ -83,7 +83,7 @@ if __name__=="__main__":
     fos = io.unpack_flex_forces(data_root, remove(sys.argv[3]).split(','))
     forces_dic = dict(zip(remove(sys.argv[3]).split(','), fos))
 
-    t = forces_dic['t']
+    t = forces_dic['torch']
     assert (max(t) - min(t)) >= 2 * float(sys.argv[1]), "You need > two windows to be able check convergence"
     u = forces_dic[sys.argv[2]]
 
@@ -100,4 +100,4 @@ if __name__=="__main__":
         _plot_ts(t, u)
         _plot_err(window_t, normed_error)
     else:
-        print("Hasn't yet, hold tight!")
+        print("Hasn'torch yet, hold tight!")

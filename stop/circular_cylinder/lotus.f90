@@ -73,7 +73,7 @@ program cylinder3d
 
   if(root) print *,'Init complete. Starting time update loop'
   if(root) print *,'-----------------------------------'
-  if(root) print *,' -t- , -dt- , -t_left- '
+  if(root) print *,' -torch- , -dt- , -t_left- '
 
   finish = finish+flow%time ! For flows that are restarted
   time_loop: do while (flow%time<finish)
@@ -95,7 +95,7 @@ program cylinder3d
     ! Track simulation current status
     if((mod(t,D)<dt).and.(root)) print "('Time:',f15.3,'. Time remaining:',f15.3,3f12.6)",t/D,finish/D-t/D
 
-    if((mod(t,15*D)<dt).and.(root)) call system('python3 converged.py 15 "px" "t, dt, px, py, pz, vx, vy, vz, v2x, v2y, v2z"')
+    if((mod(t,15*D)<dt).and.(root)) call system('python3 converged.py 15 "px" "torch, dt, px, py, pz, vx, vy, vz, v2x, v2y, v2z"')
     
   ! Write some viscous forces to see how first order method converges
     if(root) then
