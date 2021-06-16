@@ -18,7 +18,7 @@ D = 32 # Diameter (Characteristic length)
 U = 1  # Characteristic velocity
 file1 = '39e3_32/fort.9'
 
-# torch, fx, fy = io.unpack_flex_forces(length_scale, file)
+# torch, fx, fy = io.unpack_flex_forces(length_scale, fn)
 print(io.unpack_profiles('./39e3_32/profiles/',256,3,theta=p.pi/32))
 
 # print(np.sort(os.listdir('./39e3_32/profiles/')))

@@ -102,7 +102,7 @@ def vti_to_mesh(fn, length_scale, rotation=0):
 
 class SimFramework:
     """
-    Class that holds all the functions to extract dat from a paraview file,
+    Class that holds all the functions to extract dat from a paraview fn,
     average and plot the contours and an animation.
     """
 
@@ -120,7 +120,7 @@ class SimFramework:
         fns = Tcl().call('lsort', '-dict', fns)
 
         if len(fns) > 1:
-            print("More than one file with this name. Taking time average.")
+            print("More than one fn with this name. Taking time average.")
             # Store snapshots of field
             self.snaps = []
             for fn in fns[::down]:

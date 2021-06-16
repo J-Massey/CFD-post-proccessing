@@ -63,10 +63,10 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
         vals = data.omega
         cmap = sns.color_palette("seismic", as_cmap=True)
     elif interest == 'mat_file':
-        vals = data.U.torch
+        vals = data.U.T
 
     grey_color = '#dedede'
-    rec = patches.Rectangle((0, -1 / 91.42), 1., 1/45.71, -12, linewidth=0.2, edgecolor='black', facecolor=grey_color)
+    rec = patches.Rectangle((0, -1 / 91.42), 1., 1/45.71, -theta, linewidth=0.2, edgecolor='black', facecolor=grey_color)
     ax.add_patch(rec)
 
     lim = [np.min(vals), np.max(vals)]
@@ -83,7 +83,7 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
     if filled:
         cs = ax.contourf(X, Y, np.transpose(vals),
                          levels=lvls, vmin=lim[0], vmax=lim[1],
-                         norm=norm, cmap=cmap)
+                         norm=norm, cmap=cmap, extend='max')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
         fig.add_axes(ax_cb)
         plt.colorbar(cs, cax=ax_cb)
@@ -94,11 +94,11 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
     del X, Y, vals
     ax.set_aspect(1)
 
-    plt.savefig(fn_save, dpi=300)
+    plt.savefig(fn_save, dpi=60)
     plt.close()
 
 
-def vtr_to_mesh(fn, length_scale, rotation=12):
+def vtr_to_mesh(fn, length_scale, rotation=2):
     rot = rotation / 180 * np.pi
     data = io.read_vtr(fn)
     # Get the grid
@@ -122,7 +122,7 @@ def vtr_to_mesh(fn, length_scale, rotation=12):
 
 class SimFramework:
     """
-    Class that holds all the functions to extract dat from a paraview file,
+    Class that holds all the functions to extract dat from a paraview fn,
     average and plot the contours and an animation.
     """
 
@@ -140,7 +140,7 @@ class SimFramework:
         fns = Tcl().call('lsort', '-dict', fns)
 
         if len(fns) > 1:
-            print("More than one file with this name. Taking time average.")
+            print("More than one fn with this name. Taking time average.")
             # Store snapshots of field
             self.snaps = []
             for fn in fns[::down]:
@@ -162,7 +162,7 @@ class SimFramework:
             self.p = np.squeeze(self.p)
         self.z = np.ones(np.shape(self.X))
         # --- Unpack mean flow quantities ---
-        names = kwargs.get('names', ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z'])
+        names = kwargs.get('names', ['t', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z'])
         fos = (io.unpack_flex_forces(os.path.join(self.sim_dir, 'fort.9'), names))
         self.fos = dict(zip(names, fos))
 
@@ -207,14 +207,14 @@ class SimFramework:
 
 class PIVFramework:
     """
-    Class that holds all the functions to extract dat from a .mat file to a plottable form.
+    Class that holds all the functions to extract dat from a .mat fn to a plottable form.
     """
-    def __init__(self, exp, **kwargs):
+    def __init__(self, exp, fn, **kwargs):
         rms = kwargs.get('rms', False)
         mag = kwargs.get('mag', True)
         vort = kwargs.get('vort', False)
         data = {}
-        f = h5py.File(exp)['smooth_Re10k_AoA_12']
+        f = h5py.File(exp)[fn]
         for k, v in f.items():
             data[k] = np.array(v)
         # Normalise with the chord length
@@ -237,13 +237,13 @@ class PIVFramework:
             for idx, (snap_u, snap_v) in enumerate(zip(self.u, self.v)):
                 omega.append(np.array(calc.vortZ(snap_u, snap_v, x=self.X[:, 0], y=self.Y[0], acc=2)))
             self.omega = np.sum(omega, axis=0)/len(self.U)
-            self.omega = self.omega.torch
+            self.omega = self.omega.T
             self.omega = data['vort']/U_inf
             self.omega = np.squeeze(np.mean(self.omega, axis=0)).T
     #
     # def animate(dis, folder, **kwargs):
     #     for idx, snap in enumerate(dis.snaps):
-    #         dat = np.array(snap).torch
+    #         dat = np.array(snap).t
     #         animate_isocontours(dat, 'mag', folder+str(idx)+'.png', **kwargs)
     #     # Sort filenames to make sure they're in order
     #     fn_images = os.listdir(folder)
@@ -257,38 +257,41 @@ class PIVFramework:
 if __name__ == "__main__":
     plt.style.use(['science', 'grid'])
     c = 96
-    exp_data = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field/exp_data/smooth_Re10k_AoA_12.mat'
-    data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field'
-    data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/circle_caps/eps-half'
+    theta = 2
+    file = 'smooth_Re10k_AoA_2'
+    exp_data = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field/exp_data/'+file+'.mat'
+
+    data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_2'
     tit = r'$ \overline{|U|} $'
-    flow = PIVFramework(exp_data)
+    flow = PIVFramework(exp_data, file)
     plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_mag.pdf'),
                            title=tit, lims=[0, 1.4], step=0.1)
     tit = r'$ \overline{||U|^{\prime}|} $'
-    flow = PIVFramework(exp_data, rms=True)
+    flow = PIVFramework(exp_data, file, rms=True)
     plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_rms_mag.pdf'),
-                           title=tit, lims=[0, .4])
+                           title=tit, lims=[0, .2])
     tit = r'$ \overline{|\omega|} $'
-    flow = PIVFramework(exp_data, vort=True)
+    flow = PIVFramework(exp_data, file, vort=True)
     plot_2D_fp_isocontours(flow, 'mat_file_vort', os.path.join(data_root, 'figures/exp_vort.pdf'),
                            title=tit, lims=[-115, 85], lvls=11)
-    tit = r'$ \overline{|U|} $'
-    flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
-                        length_scale=c, rotation=12)
-    field = 'mag'
-    plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_mag.pdf'),
-                           title=tit, lims=[0, 1.4], step=0.1)
-    tit = r'$ \overline{||U|^{\prime}|} $'
-    flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'rms2D',
-                        length_scale=c, rotation=12)
-    field = 'p'
-    plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_rms_mag.pdf'),
-                           title=tit, step=0.04, lims=[0, .4])
-    #
-    flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'slVor',
-                        length_scale=c, rotation=12)
-    tit = r'$ \overline{|\omega|} $'
-    field = 'vort'
-    plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_vort.pdf'),
-                           title=tit, lims=[-115, 85], lvls=11)
+    for c in [64, 96, 128, 192]:
+        tit = r'$ \overline{|U|} $'
+        flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
+                            length_scale=c, rotation=12)
+        field = 'mag'
+        plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_mag.pdf'),
+                               title=tit, lims=[0, 1.4], step=0.1)
+        tit = r'$ \overline{||U|^{\prime}|} $'
+        flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'spRms',
+                            length_scale=c, rotation=12)
+        field = 'p'
+        plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_rms_mag.pdf'),
+                               title=tit, lims=[0, .2])
+
+        # flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'slVor',
+        #                     length_scale=c, rotation=12)
+    # tit = r'$ \overline{|\omega|} $'
+    # field = 'vort'
+    # plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/sim_vort.pdf'),
+    #                        title=tit, lims=[-115, 85], lvls=11)
 

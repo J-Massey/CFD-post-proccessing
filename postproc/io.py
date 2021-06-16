@@ -18,12 +18,12 @@ def read_data(file, shape, **kwargs):
     The dat field is supposed to have been written as: (for k; for j; for i;) where the last dimension
     is the quickest varying index. Each record should have been written as: u, v, w.
     The return velocity components are always converted in np.double precision type.
-    :param file: file to read from.
+    :param file: fn to read from.
     :param shape: Shape of the dat as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
     :param kwargs:
         dtype: numpy dtype object. Single or double precision expected.
         stream (depracated, use always stream output): type of access of the binary output. If false, there is a 4-byte header
-            and footer around each "record" in the binary file (means +2 components at each record) (can happen in some
+            and footer around each "record" in the binary fn (means +2 components at each record) (can happen in some
             Fortran compilers if access != 'stream').
         periodic: If the user desires to make the dat periodic in a certain direction: (0,0,1) makes periodic in z.
         ncomponents: Specify the number of components. Default = ndims of the field
@@ -130,13 +130,13 @@ def read_data_raw(file, shape, ncomponents):
 def read_and_write_fractioned_mean_data(f_w_list, shape, **kwargs):
     """
     Computes a weighted average of files which containg partial averages of quantities.
-    :param f_w_list: list of tuples containing (file, weight).
+    :param f_w_list: list of tuples containing (fn, weight).
     :param shape: Shape of the dat as (Nx,Ny) for 2D or (Nx,Ny,Nz) for 3D.
     :param kwargs:
     :param kwargs:
         dtype: numpy dtype object. Single or double precision expected.
         stream (depracated, use always stream output): type of access of the binary output. If false, there is a 4-byte header
-            and footer around each "record" in the binary file (means +2 components at each record) (can happen in some
+            and footer around each "record" in the binary fn (means +2 components at each record) (can happen in some
             Fortran compilers if access != 'stream').
         periodic: If the user desires to make the dat spanwise periodic (true) or not (false).
         ncomponents: Specify the number of components. Default = ndims of the field
@@ -255,7 +255,7 @@ def unpack3Dforces(file, D=1, U=1):
 def unpack_flex_forces(file, names):
     """
     Unpacks ASCII files containing columns of user defined parameters. This allows the testing of new functions in
-    the body module and flexibility in what is printed to your 'fort.9' file
+    the body module and flexibility in what is printed to your 'fort.9' fn
     :param file: File to read from.
     :param names: dtype=list The names of the parameters you've decided to write in the simulation
     :return: New arrays assigned to your names
@@ -271,7 +271,7 @@ def unpackTimeSeries(file, npoints):
     """
     Unpacks ASCII files containing the following columns: non-dimensional time, point1, point2, ...
     :param file:
-    :param npoints: number of points recorded in the file
+    :param npoints: number of points recorded in the fn
     :return: time, point1, point2, ...
     """
     if npoints == 1:
@@ -373,13 +373,13 @@ def pvd_parser(fname, n=None): # 'n' is the number of snapshots set by user to c
 
 
 def write_object(obj, fname):
-    with open(fname, 'wb') as output:  # Overwrites any existing file.
+    with open(fname, 'wb') as output:  # Overwrites any existing fn.
         pickle.dump(obj, output, protocol=pickle.HIGHEST_PROTOCOL)
     return
 
 
 def read_object(fname):
-    with open(fname, 'rb') as input:  # Overwrites any existing file.
+    with open(fname, 'rb') as input:  # Overwrites any existing fn.
         obj = pickle.load(input)
     return obj
 

@@ -69,7 +69,7 @@ for idx in range(len(xs[0])):
 
         # postproc.gmm.plot_gmm(dat.cpu(), Y.cpu(),
         #             y_label=r"$ \theta $", x_label=r"$ r $", label=['3D','2D'],
-        #             file=data_root_t+f"figures/group_{idx}.svg",
+        #             fn=data_root_t+f"figures/group_{idx}.svg",
         #             tit=f"$ {round(angles[idx], 2)}^r $ from the front",
         #             colours=colours)
 
@@ -92,7 +92,7 @@ for idx in range(len(xs[0])):
         #     postproc.plotter.simple_plot(*pow_spec,
         #                 y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/length_scale $", colour=colours[loop-1],
         #                 colours=colours[:len(xs)], tit=f"$ {round(angles[idx], 2)}^r $ from the front",
-        #                 file=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
+        #                 fn=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
         #
         # plt.close()
 

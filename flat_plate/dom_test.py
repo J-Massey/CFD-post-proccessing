@@ -54,13 +54,13 @@ for idx, fn in enumerate(files):
     # uk = uk / area
     fs.append(f); uks.append((labels[idx], uk))
     # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ torch $", y_label=r"$ C_{L_{p}} $",
-    #                                     file=vtr_file + f'figures/CLp-torch.svg',
+    #                                     fn=vtr_file + f'figures/CLp-torch.svg',
     #                                     colour=colours[idx])  # , colours=colours[:len(files)], l_label=labels[:len(files)])
 
     means.append(np.mean(u)); vars.append(np.var(u))
 
 # postproc.plotter.domain_test_plot(np.array(means), np.array(vars), y_label=r"$ \overline{C_{L_{p}}} $",
-#                                   file=vtr_file + 'figures/summary_dom_means_py.svg', doms=labels[:len(files)])
+#                                   fn=vtr_file + 'figures/summary_dom_means_py.svg', doms=labels[:len(files)])
 fs = list(fs)
 uks = list(uks)
 postproc.plotter.plotLogLogTimeSpectra_list_cascade(data_root + 'figures/summary_dom_test.svg', uks, fs,

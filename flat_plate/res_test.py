@@ -18,14 +18,15 @@ from tqdm import tqdm
 
 plt.style.use(['science', 'grid'])
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/circle_caps/eps-1/'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_2'
 force_file = '3D/fort.9'
-names = ['torch', 'dt', 'px', 'py', 'pz', 'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z']
+names = ['t', 'dt', 'px', 'py', 'pz']
 interest = 'p'
 label = r'$ C_{L_{p}} $'
-tit = r'$\epsilon = 1.$'
+tit = r'$\epsilon = 0.5$'
 
 D = [64, 96, 128]
+theta = np.radians(2)
 colors = sns.color_palette("husl", len(D))
 
 # How long from 2D to 3D, and when to crop TS
@@ -40,14 +41,13 @@ fs, uks_labelled, uks = [], [], []
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r' $torch/D $')
+ax1.set_xlabel(r'$ t/D $')
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['torch'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'Y']))
+    t, u = forces_dic['t'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'y']))
     # Transform the forces into the correct plane
-    theta = np.radians(12)
     rot = np.array((np.cos(theta), -np.sin(theta)),
                    (np.sin(theta), np.cos(theta)))
     rot = np.array((np.sin(theta), np.cos(theta)))
@@ -65,7 +65,7 @@ for idx, fn in tqdm(enumerate(D), desc='File loop'):
     ax1.plot(t, u, label=labels[idx])
 
 ax1.legend()
-fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
+fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=30, transparent=False)
 plt.close()
 
 postproc.plotter.plot_fft(data_root + f'figures/spectra_{interest}.pdf',

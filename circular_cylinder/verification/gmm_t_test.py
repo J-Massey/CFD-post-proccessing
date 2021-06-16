@@ -60,13 +60,13 @@ def main():
 
             # gmm.plot_gmm(dat.cpu(), Y.cpu(),
             #             y_label=r"$ \theta $", x_label=r"$ r $", label=['3D','2D'],
-            #             file=data_root_t+f"figures/group_{idx}.svg",
+            #             fn=data_root_t+f"figures/group_{idx}.svg",
             #             tit=f"$ {round(angles[idx], 2)}^r $ from the front",
             #             colours=colours)
             # plotter.simple_plot(*pow_spec, l_label=labels[:len(xs)],
             #             y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ torch/length_scale $", colour=colours[case],
             #             colours=colours[:len(xs)], tit=f"$ {round(angles[idx], 2)}^r $ from the front",
-            #             file=data_root_t+f"figures/pow_spec_{idx}.svg")
+            #             fn=data_root_t+f"figures/pow_spec_{idx}.svg")
 
             t=np.linspace(100,500,len(data))
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 #     for case,(x,Y) in enumerate(zip(xs,ys)):
 #         # Flot top half of the t_100 case
 #         fifty=int(30*len(x[idx])/100)
-#         plot_poincare(x[idx][fifty:-1], Y[idx][fifty:-1], file=data_root_t+f"full_30_{idx}.svg", y_label=r"$ \theta $", x_label=r"$ r $",\
+#         plot_poincare(x[idx][fifty:-1], Y[idx][fifty:-1], fn=data_root_t+f"full_30_{idx}.svg", y_label=r"$ \theta $", x_label=r"$ r $",\
 #             tit=f"$ {round(angles[idx], 2)}^r $ from the front", alpha=0.4, color=colours[case], colours=colours[:len(xs)], label=labels)
 #     plt.close()
 

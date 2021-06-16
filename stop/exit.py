@@ -23,7 +23,7 @@ if __name__ == '__main__':
     try:
         subprocess.call('rm .kill', shell=True, cwd=Path.cwd())
     except FileNotFoundError:
-        print("No .kill file present. You are cleared for takeoff")
+        print("No .kill fn present. You are cleared for takeoff")
     killer = GracefulKiller()
     while not killer.kill_now:  
         time.sleep(1)

@@ -43,7 +43,7 @@ u = forces_dic[interest] * np.sin(12*np.pi/180)
 #                                     x_label=r"$ torch/length_scale $",
 #                                     colour='red',
 #                                     tit=f"Time series",
-#                                     file=vtr_file + f"figures/time_series_{interest}.png")
+#                                     fn=vtr_file + f"figures/time_series_{interest}.png")
 
 
 cycles = 10

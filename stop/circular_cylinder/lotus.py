@@ -79,7 +79,7 @@ def run(n_proc=0,run_folder='test',read_folder=None):
 
 def replace(template,dic):
     """
-    Write lotus.f90 file by replacing the dic on the template
+    Write lotus.f90 fn by replacing the dic on the template
     and return a potential folder name
     """
     f1 = open(template,'r')

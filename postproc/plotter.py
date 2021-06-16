@@ -48,7 +48,7 @@ def plot_history(f, t, label, file, title, **kwargs):
 	:param f: Force [numpy 1D array]
 	:param t: Time [numpy 1D array]
 	:param label: Y label
-	:param file: output file name [string]
+	:param file: output fn name [string]
 	:param title: graph tit
 	:param kwargs: Select which additional information you want to include in the plot: 'St', 'CL_rms', 'CD_rms', 'n_periods',
 		passing the corresponding values. E.g. 'St=0.2'.
@@ -159,13 +159,13 @@ def domain_test_plot(means, var, file, y_label, title=None, doms=None):
 
 def plot_2D(u, file='test.pdf', **kwargs):
     """
-	Return nothing and saves the figure in the specified file name.
+	Return nothing and saves the figure in the specified fn name.
 	Args:
 		cmap: matplotlib cmap. Eg: cmap = "seismic"
 		lvls: number of levels of the contour. Eg: lvls = 100
 		lim:  min and max values of the contour passed as array. Eg: lim = [-0.5, 0.5]
-		file: Name of the file to save the plot (recommended .pdf so it can be converted get .svg).
-			  Eg: file = "dUdy.pdf"
+		file: Name of the fn to save the plot (recommended .pdf so it can be converted get .svg).
+			  Eg: fn = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
 		Y=[ymin,ymax] is the Y axis minimum and maximum specified
@@ -483,13 +483,13 @@ def density2D(x, y, file='test.pdf', nbins=20, **kwargs):
 
 def plot2D_uv(u, cmap, lvls, lim, file, **kwargs):
     """
-	Return nothing and saves the figure in the specified file name.
+	Return nothing and saves the figure in the specified fn name.
 	Args:
 		cmap: matplotlib cmap. Eg: cmap = "seismic"
 		lvls: number of levels of the contour. Eg: lvls = 100
 		lim:  min and max values of the contour passed as array. Eg: lim = [-0.5, 0.5]
-		file: Name of the file to save the plot (recommended .pdf so it can be converted get .svg).
-			  Eg: file = "dUdy.pdf"
+		file: Name of the fn to save the plot (recommended .pdf so it can be converted get .svg).
+			  Eg: fn = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
 		Y=[ymin,ymax] is the Y axis minimum and maximum specified
@@ -634,13 +634,13 @@ def plot2D_circulation(u, cmap, lvls, lim, file, **kwargs):
 
 def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
     """
-	Return nothing and saves the figure in the specified file name.
+	Return nothing and saves the figure in the specified fn name.
 	Args:
 		cmap: matplotlib cmap. Eg: cmap = "seismic"
 		lvls: number of levels of the contour. Eg: lvls = 100
 		lim:  min and max values of the contour passed as array. Eg: lim = [-0.5, 0.5]
-		file: Name of the file to save the plot (recommended .pdf so it can be converted get .svg).
-			  Eg: file = "dUdy.pdf"
+		file: Name of the fn to save the plot (recommended .pdf so it can be converted get .svg).
+			  Eg: fn = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
 		Y=[ymin,ymax] is the Y axis minimum and maximum specified
@@ -714,13 +714,13 @@ def plot2Dvort(u, cmap, lvls, lim, file, **kwargs):
 
 def plot2Dseparation(u, file, **kwargs):
     """
-	Return nothing and saves the figure in the specified file name.
+	Return nothing and saves the figure in the specified fn name.
 	Args:
 		cmap: matplotlib cmap. Eg: cmap = "seismic"
 		lvls: number of levels of the contour. Eg: lvls = 100
 		lim:  min and max values of the contour passed as array. Eg: lim = [-0.5, 0.5]
-		file: Name of the file to save the plot (recommended .pdf so it can be converted get .svg).
-			  Eg: file = "dUdy.pdf"
+		file: Name of the fn to save the plot (recommended .pdf so it can be converted get .svg).
+			  Eg: fn = "dUdy.pdf"
 	Kwargs:
 		x=[xmin,xmax] is the x axis minimum and maximum specified
 		Y=[ymin,ymax] is the Y axis minimum and maximum specified
@@ -1165,7 +1165,7 @@ def plotCL(fy, t, file, colour='red', label=None, **kwargs):
 	Plot the lift force as a time series.
 	:param fy: Lift force [numpy 1D array]
 	:param t: Time [numpy 1D array]
-	:param file: output file name [string]
+	:param file: output fn name [string]
 	:param colour: colour...
 	:param label: label...
 	:param kwargs: Select which additional information you want to include in the plot: 'St', 'CL_rms', 'CD_rms', 'n_periods',
@@ -1220,7 +1220,7 @@ def plotTKEspatial(tke, file, **kwargs):
     """
 	1D plot of the TKE in space
 	:param tke: Turbulent kinetic energy [numpy 1D array]
-	:param file: output file name [string]
+	:param file: output fn name [string]
 	:param kwargs: 'x' coordinates [numpy 1D array]
 	:return: -
 	"""
@@ -1264,7 +1264,7 @@ def plotTKEspatial(tke, file, **kwargs):
 def plotTKEspatial_list(file, tke_tuple_list, **kwargs):
     """
 	Generate a plot of a TKE list of tuples like (case, tke) in space
-	:param file: output file name [string]
+	:param file: output fn name [string]
 	:param tke_tuple_list: list containing the tuple as ('case', tke), where 'case' is a string and 'tke' is a 1D numpy array
 	:param kwargs: 'x' coordinates [numpy 1D array]
 	:return: -
@@ -1478,7 +1478,7 @@ def plotXY(y, **kwargs):
 	Generate a x-Y plot in space
 	:param y: series to plot [1D numpy array]
 	:param label: Y axis label [string]
-	:param file: output file name
+	:param file: output fn name
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
 	"""
@@ -1486,7 +1486,7 @@ def plotXY(y, **kwargs):
 
     N = y.shape[0]
     x = kwargs.get('x', np.arange(N))
-    file = kwargs.get('file', 'test.pdf')
+    file = kwargs.get('fn', 'test.pdf')
     x_label = kwargs.get('x_label', None)
     y_label = kwargs.get('y_label', None)
     ylog = kwargs.get('ylog', False)
@@ -1515,7 +1515,7 @@ def plotXYSpatial(y, label, file, **kwargs):
 	Generate a x-Y plot in space
 	:param y: series to plot [1D numpy array]
 	:param label: Y axis label [string]
-	:param file: output file name
+	:param file: output fn name
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
 	"""
@@ -1564,7 +1564,7 @@ def plotScatter(x, y, cases, file):
 	:param x: series to plot [1D numpy array]
 	:param y: series to plot [1D numpy array]
 	:param label: Y axis label [string]
-	:param file: output file name
+	:param file: output fn name
 	:return: -
 	"""
     ax = plt.gca()
@@ -1602,7 +1602,7 @@ def plotScatter2(x1, x2, y, cases, file):
 	:param x: series to plot [1D numpy array]
 	:param y: series to plot [1D numpy array]
 	:param label: Y axis label [string]
-	:param file: output file name
+	:param file: output fn name
 	:return: -
 	"""
     ax1 = plt.gca()
@@ -1646,7 +1646,7 @@ def plotScatter2(x1, x2, y, cases, file):
 def plotXYSpatial_list(file, y_tuple_list, **kwargs):
     """
 	Generate a x-Y plot in space of multiples Y series
-	:param file: output file name
+	:param file: output fn name
 	:param y_tuple_list: list of tuples as (case, Y) where 'case' is the name of the case [string] and 'Y' the series [1D numpy array]
 	:param kwargs: 'x' coordinates [numpy 1D array], 'xD_min' left x limit, 'ylog' log plot [boolean]
 	:return: -
@@ -1735,7 +1735,7 @@ def plotXYSpatial_list(file, y_tuple_list, **kwargs):
 def velocity_profiles(file, profiles_tuple_list, **kwargs):
     """
 	Similar to plotXYSpatial_list just for a specific test case
-	:param file: output file name
+	:param file: output fn name
 	:param profiles_tuple_list: list of tuples of format(u,Y)
 	"""
     ax = plt.gca()
@@ -1866,7 +1866,7 @@ def plot_fft(file, xs, ys, x_label=r'$ f/U D $', y_label=None, title=None,
 def plotLogLogSpatialSpectra(file, wn, uk):
     """
 	Generate a loglog plot of a 1D spatial signal
-	:param file: output file name
+	:param file: output fn name
 	:param wn: frequency [1D numpy array]
 	:param uk: transformed u: uk = FFT(u). [1D numpy array]
 	:return: -
@@ -1906,7 +1906,7 @@ def plotLogLogSpatialSpectra(file, wn, uk):
 def plotLogLogSpatialSpectra_list(file, uk_tuple_list, wn_list):
     """
 	Generate a loglog plot of a list of 1D spatial signals
-	:param file: output file name
+	:param file: output fn name
 	:param tke_tuple_list: list of tuples as (case, uk), where 'case' is the case name [string] and 'uk' is
 		the transformed u: uk = FFT(u). [1D numpy array]
 	:param wn_list: list of frequencies for the different cases
@@ -1969,7 +1969,7 @@ def plotLogLogTimeSpectra(freqs, uk, file):
 	Generate a loglog plot of a time spectra series
 	:param freqs: frequency [1D numpy array]
 	:param uk: power signal of the time series u [1D numpy array]
-	:param file: output file name
+	:param file: output fn name
 	:return: -
 	"""
     ax = plt.gca()
@@ -2008,7 +2008,7 @@ def plotLogLogTimeSpectra(freqs, uk, file):
 def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
     """
 	Generate a loglog plot of a list of time spectra series
-	:param file: output file name
+	:param file: output fn name
 	:param uk_tuple_list: list of tuples as (case, uk), where 'case' is the case name [string] and 'uk' is
 		power signal of the time series u [1D numpy array]
 	:param freqs_list: list containing the frequencies [1D numpy array] for each case
@@ -2061,7 +2061,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
 def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None, ylabel=None):
     """
 	Generate a loglog plot of a list of time spectra series
-	:param file: output file name
+	:param file: output fn name
 	:param uk_tuple_list: list of tuples as (case, uk), where 'case' is the case name [string] and 'uk' is
 		power signal of the time series u [1D numpy array]
 	:param freqs_list: list containing the frequencies [1D numpy array] for each case
@@ -2239,7 +2239,7 @@ def plotLumleysTriangle(eta, xi, file):
 	Generate a plot of the Reynolds stresses anisotropy tensor in the form of the Lumley's triangle
 	:param eta: Invariant of the anisotropy tensor (displayed on the vertical axis) [1D array of points in space, i.e. Y triangle coordinates]
 	:param xi: Invariant of the anisotropy tensor (displayed on the horizontal axis) [1D array of points in space, i.e. x triangle coordinates]
-	:param file: output file name
+	:param file: output fn name
 	:return: -
 	"""
     ax = plt.gca()
@@ -2278,7 +2278,7 @@ def plotLumleysTriangle(eta, xi, file):
 def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
     """
 	Generate a plot of the Reynolds stresses anisotropy tensor in the form of the Lumley's triangle for different cases
-	:param file: output file name
+	:param file: output fn name
 	:param eta_tuple_list: list of tuples as (case, eta) for the 'eta' invariant
 	:param xi_tuple_list: list of tuples as (case, xi) for the 'xi' invariant
 	:return:
@@ -2340,7 +2340,7 @@ def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
 
 
 # ------------------------------------------------------ GC plots
-# def error_order(file, x, Y):
+# def error_order(fn, x, Y):
 #	 """
 #	 Generate a loglog plot of a time spectra series using the matplotlib library given the arguments
 #	 """
@@ -2373,7 +2373,7 @@ def plotLumleysTriangle_list(file, eta_tuple_list, xi_tuple_list):
 #
 #	 # Show plot and save figure
 #	 plt.show()
-#	 plt.savefig(file, transparent=True, bbox_inches='tight')
+#	 plt.savefig(fn, transparent=True, bbox_inches='tight')
 #	 return
 
 
@@ -2454,13 +2454,13 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
     return _multiple_formatter
 
 
-# def plot_poincare(x, Y, file, **kwargs):
+# def plot_poincare(x, Y, fn, **kwargs):
 #     """
 # 	Generate a x-Y plot in space
 # 	:param x: series to plot [1D numpy array]
 # 	:param Y: series to plot [1D numpy array]
 # 	:param label: Y axis label [string]
-# 	:param file: output file name
+# 	:param fn: output fn name
 # 	:return: -
 # 	"""
 #     ax = plt.gca()
@@ -2488,7 +2488,7 @@ def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
 #     leg.get_frame().set_alpha(0.85)
 #
 #     # Show plot and save figure
-#     plt.savefig(file, transparent=True, bbox_inches='tight')
+#     plt.savefig(fn, transparent=True, bbox_inches='tight')
 #     return
 
 
