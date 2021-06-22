@@ -60,6 +60,7 @@ def plot_BL_corruption():
 
     # Distance function from eps away from body edge
     dis = np.sqrt(X ** 2 + Y ** 2)
+    print(type(dis))
 
     # Cmap definition
     bs = iter((np.array([14, 15.8, 18.7, 22]) - 4.5) / D)

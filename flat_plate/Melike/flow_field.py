@@ -16,12 +16,12 @@ import numpy as np
 import matplotlib.colors as colors
 from matplotlib import ticker, cm
 import seaborn as sns
-import torch
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tkinter import Tcl
 import imageio
-import tqdm
+from tqdm import tqdm
 import h5py
+from pygifsicle import optimize
 
 
 def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
@@ -64,6 +64,9 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
         cmap = sns.color_palette("seismic", as_cmap=True)
     elif interest == 'mat_file':
         vals = data.U.T
+    elif interest == 'snap_mat_file':
+        s = kwargs.get('snap', 0)
+        vals = data.mag_snap[s].T
 
     grey_color = '#dedede'
     rec = patches.Rectangle((0, -1 / 91.42), 1., 1/45.71, -theta, linewidth=0.2, edgecolor='black', facecolor=grey_color)
@@ -94,7 +97,7 @@ def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):
     del X, Y, vals
     ax.set_aspect(1)
 
-    plt.savefig(fn_save, dpi=60)
+    plt.savefig(fn_save, dpi=300)
     plt.close()
 
 
@@ -192,17 +195,11 @@ class SimFramework:
     def downsample(self, skip=1):
         self.X, self.Y, self.U, self.V, self.p = np.mean(np.array(self.snaps[::(skip + 1)]).T, axis=1)
 
-    def animate(self, folder, **kwargs):
-        for idx, snap in enumerate(self.snaps):
-            dat = np.array(snap).T
-            plot_2D_fp_isocontours(dat, 'mag', folder+str(idx)+'.png', **kwargs)
-        # Sort filenames to make sure they're in order
-        fn_images = os.listdir(folder)
-        fn_images = Tcl().call('lsort', '-dict', fn_images)
-        images = []
-        for filename in fn_images:
-            images.append(imageio.imread(os.path.join(folder, filename)))
-        imageio.mimsave(folder+'/flow.gif', images, duration=0.2, bitrate=1000)
+
+# def save_frames(data, folder, interest):
+#     for idx, snap in tqdm(enumerate(data), desc='Plotting frames'):
+#         da = np.array(snap).T
+#         plot_2D_fp_isocontours(da, interest, os.path.join(folder, str(idx) + '.png'))
 
 
 class PIVFramework:
@@ -222,9 +219,10 @@ class PIVFramework:
         self.X, self.Y = data['X']/l, data['Y']/l
         self.u, self.v = data['VY']/U_inf, data['VX']/U_inf
         if mag:
-            mag = np.sqrt((np.einsum('...jk,...jk->...jk', self.u, self.u) +
-                           np.einsum('...jk,...jk->...jk', self.v, self.v)))
-            mean = np.mean(mag, axis=0)
+            self.mag_snap = np.sqrt((np.einsum('...jk,...jk->...jk', self.u, self.u) +
+                                     np.einsum('...jk,...jk->...jk', self.v, self.v)))
+
+            mean = np.mean(self.mag_snap, axis=0)
             self.U = mean
         if rms:
             mag = np.sqrt((np.einsum('...jk,...jk->...jk', self.u, self.u) +
@@ -240,41 +238,49 @@ class PIVFramework:
             self.omega = self.omega.T
             self.omega = data['vort']/U_inf
             self.omega = np.squeeze(np.mean(self.omega, axis=0)).T
-    #
-    # def animate(dis, folder, **kwargs):
-    #     for idx, snap in enumerate(dis.snaps):
-    #         dat = np.array(snap).t
-    #         animate_isocontours(dat, 'mag', folder+str(idx)+'.png', **kwargs)
-    #     # Sort filenames to make sure they're in order
-    #     fn_images = os.listdir(folder)
-    #     fn_images = Tcl().call('lsort', '-dict', fn_images)
-    #     images = []
-    #     for filename in fn_images:
-    #         images.append(imageio.imread(os.path.join(folder, filename)))
-    #     imageio.mimsave(folder+'/flow.gif', images, duration=0.2)
+
+
+def animate(data, folder, interest):
+    # save_frames(data, folder, interest)
+    # Sort filenames to make sure they're in order
+    fn_images = os.listdir(folder)
+    fn_images = Tcl().call('lsort', '-dict', fn_images)
+    # Create gif
+    gif_path = folder + '/exp_'+interest+'.gif'
+    with imageio.get_writer(gif_path, mode='I', duration=0.15) as writer:
+        for filename in tqdm(fn_images[::3], desc='Loop images'):
+            writer.append_data(imageio.imread(os.path.join(folder, filename)))
+    optimize(gif_path)
+
+
+def save_piv_frames(data, folder, interest):
+    for snap in range(len(data.mag_snap)):
+        plot_2D_fp_isocontours(data, interest, os.path.join(folder, str(snap) + '.png'),
+                               title=r'$ \overline{|U|} $', lims=[0, 1.4], step=0.1, snap=snap)
 
 
 if __name__ == "__main__":
     plt.style.use(['science', 'grid'])
-    c = 96
-    theta = 2
-    file = 'smooth_Re10k_AoA_2'
+    theta = 12
+    file = 'smooth_Re10k_AoA_12'
     exp_data = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field/exp_data/'+file+'.mat'
 
-    data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_2'
+    data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_12'
     tit = r'$ \overline{|U|} $'
-    flow = PIVFramework(exp_data, file)
-    plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_mag.pdf'),
-                           title=tit, lims=[0, 1.4], step=0.1)
-    tit = r'$ \overline{||U|^{\prime}|} $'
-    flow = PIVFramework(exp_data, file, rms=True)
-    plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_rms_mag.pdf'),
-                           title=tit, lims=[0, .2])
-    tit = r'$ \overline{|\omega|} $'
-    flow = PIVFramework(exp_data, file, vort=True)
-    plot_2D_fp_isocontours(flow, 'mat_file_vort', os.path.join(data_root, 'figures/exp_vort.pdf'),
-                           title=tit, lims=[-115, 85], lvls=11)
-    for c in [64, 96, 128, 192]:
+    # flow = PIVFramework(exp_data, file)
+    # plot_2D_fp_isocontours(flow, 'snap_mat_file', os.path.join(data_root, 'figures/animation/1.pdf'),
+    #                        title=tit, lims=[0, 1.4], step=0.15, snap=0)
+    # save_piv_frames(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
+    # animate(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
+    # tit = r'$ \overline{||U|^{\prime}|} $'
+    # flow = PIVFramework(exp_data, file, rms=True)
+    # plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_rms_mag.pdf'),
+    #                        title=tit, lims=[0, .2])
+    # tit = r'$ \overline{|\omega|} $'
+    # flow = PIVFramework(exp_data, file, vort=True)
+    # plot_2D_fp_isocontours(flow, 'mat_file_vort', os.path.join(data_root, 'figures/exp_vort.pdf'),
+    #                        title=tit, lims=[-115, 85], lvls=11)
+    for c in [64, 96, 128, 192, 256]:
         tit = r'$ \overline{|U|} $'
         flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
                             length_scale=c, rotation=12)

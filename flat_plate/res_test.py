@@ -25,7 +25,7 @@ interest = 'p'
 label = r'$ C_{L_{p}} $'
 tit = r'$\epsilon = 0.5$'
 
-D = [64, 96, 128]
+D = [64, 96, 128, 192, 256]
 theta = np.radians(2)
 colors = sns.color_palette("husl", len(D))
 
@@ -34,14 +34,14 @@ init = 20
 snip = 200
 
 # Write out labels so they're interpretable by latex
-labels = [r'$ D=64 $', r'$ D=96 $', r'$ D=128 $']
+labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $', r'$ c=192 $', r'$ c=256 $']
 
 fs, uks_labelled, uks = [], [], []
 
 # Plot TSs and save spectra
 fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
-ax1.set_xlabel(r'$ t/D $')
+ax1.set_xlabel(r'$ t/c $')
 ax1.set_ylabel(label)
 for idx, fn in tqdm(enumerate(D), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
@@ -65,14 +65,14 @@ for idx, fn in tqdm(enumerate(D), desc='File loop'):
     ax1.plot(t, u, label=labels[idx])
 
 ax1.legend()
-fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=30, transparent=False)
+fig1.savefig(os.path.join(data_root, 'figures/TS_'+interest+'.pdf'), bbox_inches='tight', dpi=30, transparent=False)
 plt.close()
 
-postproc.plotter.plot_fft(data_root + f'figures/spectra_{interest}.pdf',
+postproc.plotter.plot_fft(os.path.join(data_root, 'figures/spectra_'+interest+'.pdf'),
                           uks, fs, xlim=[0, 1],
                           l_label=labels, colours=colors, title=tit)
 
-postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{interest}.pdf',
+postproc.plotter.plotLogLogTimeSpectra_list(os.path.join(data_root, 'figures/log_spectra_'+interest+'.pdf'),
                                             uks_labelled, fs,
                                             title=tit,
                                             ylabel=r'$PS$ ' + label)
