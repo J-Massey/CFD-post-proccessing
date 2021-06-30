@@ -216,6 +216,7 @@ class PIVFramework:
             data[k] = np.array(v)
         # Normalise with the chord length
         l, U_inf = data['chord_length'], data['U_inf']
+        print(l)
         self.X, self.Y = data['X']/l, data['Y']/l
         self.u, self.v = data['VY']/U_inf, data['VX']/U_inf
         if mag:
@@ -262,37 +263,37 @@ def save_piv_frames(data, folder, interest):
 if __name__ == "__main__":
     plt.style.use(['science', 'grid'])
     theta = 12
-    file = 'smooth_Re10k_AoA_12'
+    file = 'smooth_Re10k_AoA_2'
     exp_data = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/flow_field/exp_data/'+file+'.mat'
 
     data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_12'
     tit = r'$ \overline{|U|} $'
-    # flow = PIVFramework(exp_data, file)
-    # plot_2D_fp_isocontours(flow, 'snap_mat_file', os.path.join(data_root, 'figures/animation/1.pdf'),
+    flow = PIVFramework(exp_data, file)
+    # plot_2D_fp_isocontours(flow, 'snap_mat_file', os.path.join(data_root, 'figures/exp_mag.pdf'),
     #                        title=tit, lims=[0, 1.4], step=0.15, snap=0)
-    # save_piv_frames(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
-    # animate(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
-    # tit = r'$ \overline{||U|^{\prime}|} $'
+    # # save_piv_frames(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
+    # # animate(flow, os.path.join(data_root, 'figures/animation'), 'snap_mat_file')
+    # # tit = r'$ \overline{||U|^{\prime}|} $'
     # flow = PIVFramework(exp_data, file, rms=True)
     # plot_2D_fp_isocontours(flow, 'mat_file', os.path.join(data_root, 'figures/exp_rms_mag.pdf'),
     #                        title=tit, lims=[0, .2])
-    # tit = r'$ \overline{|\omega|} $'
-    # flow = PIVFramework(exp_data, file, vort=True)
-    # plot_2D_fp_isocontours(flow, 'mat_file_vort', os.path.join(data_root, 'figures/exp_vort.pdf'),
-    #                        title=tit, lims=[-115, 85], lvls=11)
-    for c in [64, 96, 128, 192, 256]:
-        tit = r'$ \overline{|U|} $'
-        flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
-                            length_scale=c, rotation=12)
-        field = 'mag'
-        plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_mag.pdf'),
-                               title=tit, lims=[0, 1.4], step=0.1)
-        tit = r'$ \overline{||U|^{\prime}|} $'
-        flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'spRms',
-                            length_scale=c, rotation=12)
-        field = 'p'
-        plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_rms_mag.pdf'),
-                               title=tit, lims=[0, .2])
+    # # tit = r'$ \overline{|\omega|} $'
+    # # flow = PIVFramework(exp_data, file, vort=True)
+    # # plot_2D_fp_isocontours(flow, 'mat_file_vort', os.path.join(data_root, 'figures/exp_vort.pdf'),
+    # #                        title=tit, lims=[-115, 85], lvls=11)
+    # for c in [256]:
+    #     tit = r'$ \overline{|U|} $'
+    #     flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'spTAv',
+    #                         length_scale=c, rotation=12)
+    #     field = 'mag'
+    #     plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_mag.pdf'),
+    #                            title=tit, lims=[0, 1.4], step=0.1)
+    #     tit = r'$ \overline{||U|^{\prime}|} $'
+    #     flow = SimFramework(os.path.join(data_root, str(c)+'/3D'), 'spRms',
+    #                         length_scale=c, rotation=12)
+    #     field = 'p'
+    #     plot_2D_fp_isocontours(flow, field, os.path.join(data_root, 'figures/'+str(c)+'_sim_rms_mag.pdf'),
+    #                            title=tit, lims=[0, .2])
 
         # flow = SimFramework(os.path.join(data_root, str(c) + '/3D'), 'slVor',
         #                     length_scale=c, rotation=12)

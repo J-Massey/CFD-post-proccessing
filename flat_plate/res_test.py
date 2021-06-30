@@ -18,23 +18,23 @@ from tqdm import tqdm
 
 plt.style.use(['science', 'grid'])
 
-data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_2'
+data_root = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_12'
 force_file = '3D/fort.9'
 names = ['t', 'dt', 'px', 'py', 'pz']
 interest = 'p'
 label = r'$ C_{L_{p}} $'
 tit = r'$\epsilon = 0.5$'
 
-D = [64, 96, 128, 192, 256]
+c = [64, 96, 128, 256]
 theta = np.radians(2)
-colors = sns.color_palette("husl", len(D))
+colors = sns.color_palette("husl", len(c))
 
 # How long from 2D to 3D, and when to crop TS
 init = 20
 snip = 200
 
 # Write out labels so they're interpretable by latex
-labels = [r'$ c=64 $', r'$ c=96 $', r'$ c=128 $', r'$ c=192 $', r'$ c=256 $']
+labels = [r'$ c='+str(i)+' $' for i in c]
 
 fs, uks_labelled, uks = [], [], []
 
@@ -43,10 +43,10 @@ fig1, ax1 = plt.subplots(figsize=(7, 5))
 ax1.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
 ax1.set_xlabel(r'$ t/c $')
 ax1.set_ylabel(label)
-for idx, fn in tqdm(enumerate(D), desc='File loop'):
+for idx, fn in tqdm(enumerate(c), desc='File loop'):
     fos = (io.unpack_flex_forces(os.path.join(data_root, str(fn), force_file), names))
     forces_dic = dict(zip(names, fos))
-    t, u = forces_dic['t'] / D[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'y']))
+    t, u = forces_dic['t'] / c[idx], np.array((forces_dic[interest + 'x'], forces_dic[interest + 'y']))
     # Transform the forces into the correct plane
     rot = np.array((np.cos(theta), -np.sin(theta)),
                    (np.sin(theta), np.cos(theta)))
