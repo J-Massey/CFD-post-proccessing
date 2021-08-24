@@ -8,7 +8,7 @@
 
 # Imports
 import numpy as np
-import postproc.plotter
+import postproc.visualise.plotter
 import postproc.io
 import postproc.frequency_spectra
 from postproc.boundary_layer import ProfileDataset
@@ -68,7 +68,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
     instant_tke = (0.5 * (r_dash ** 2 + azi_dash ** 2)).cpu().numpy()
 
     ti = t[0:len(instant_tke[0])]
-    ax1.plot(ti, instant_tke[0], color=colors[idx], label=r'$ \epsilon = $' + str(eps[idx]))
+    ax1.plot_fill(ti, instant_tke[0], color=colors[idx], label=r'$ \epsilon = $' + str(eps[idx]))
 
     for idx1, loop in tqdm(enumerate(instant_tke), desc='Spectra', ascii=True):
         # Define how many cycles to drop to allow the flow to initialise from 2D to 3D
@@ -87,7 +87,7 @@ plt.close(fig1)
 
 # Plot spectra
 for idx, (loop_f, loop_uk) in enumerate(zip(angled_dic_f, angled_dic_uk)):
-    postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{idx}.png',
-                                                loop_uk, loop_f,
-                                                title=r'$ \theta$' + f'$ = {round(angles[idx], 2)}^r $',
-                                                ylabel=r'$PS(\sqrt{u^{\prime^{2}}+v^{\prime^{2}}})$')
+    postproc.visualise.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{idx}.png',
+                                                          loop_uk, loop_f,
+                                                          title=r'$ \theta$' + f'$ = {round(angles[idx], 2)}^r $',
+                                                          ylabel=r'$PS(\sqrt{u^{\prime^{2}}+v^{\prime^{2}}})$')

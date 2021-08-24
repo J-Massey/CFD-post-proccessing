@@ -55,7 +55,6 @@ def compare_data(model, poly_n: int, device="cuda", angles=32, fn='model.pdf'):
 
     p_data = np.load('data.npy').astype(np.float32)
     split = len(p_data[:, 0]) // (len(fos['t']))
-    print(split)
     gt = p_data[:, -1]
 
     with torch.no_grad():
@@ -112,7 +111,7 @@ def main(wd):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu:0")
 
-    params = {'batch_size': int(8192),
+    params = {'batch_size': int(1028),
               'shuffle': True,
               'num_workers': 16,
               'pin_memory': True}
@@ -128,7 +127,7 @@ def main(wd):
     model.to(device)
 
     # 3. train model
-    max_epochs = 3
+    max_epochs = 70
     ep_log_interval = 10
     lrn_rate = 0.00001
     wd = wd

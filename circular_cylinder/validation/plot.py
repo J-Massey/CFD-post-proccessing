@@ -20,7 +20,7 @@ def plot_loss(epochs, cost, fn='cost.pdf'):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     ax.set_xlabel(r"Epochs")
     ax.set_ylabel(r'$L_2$ loss')
-    ax.plot(np.linspace(0, epochs, len(cost)), cost, label=r'$L_{2}$')
+    ax.plot_fill(np.linspace(0, epochs, len(cost)), cost, label=r'$L_{2}$')
     ax.legend()
     plt.savefig(fn)
     plt.show()
@@ -31,8 +31,8 @@ def plot_model(cd_hat, fos, Y, fn='model.pdf'):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     ax.set_xlabel(r"$t/D$")
     ax.set_ylabel(r'$C_{D_f}$')
-    ax.plot(fos['t'], Y, label=r'Ground truth')
-    ax.plot(fos['t'], cd_hat, label=r'$\hat{C_{D_f}}$')
+    ax.plot_fill(fos['t'], Y, label=r'Ground truth')
+    ax.plot_fill(fos['t'], cd_hat, label=r'$\hat{C_{D_f}}$')
     ax.legend()
     plt.savefig(fn)
     plt.show()
@@ -53,10 +53,10 @@ def plot_BL_corruption():
     theta = np.linspace(0, 2 * np.pi, int(D * np.pi))
 
     Bx, By = r * np.cos(theta), r * np.sin(theta)
-    ax.plot(Bx, By, color='k', linewidth=2., label=r'Hard body boundary')
+    ax.plot_fill(Bx, By, color='k', linewidth=2., label=r'Hard body boundary')
 
     Bepx, Bepy = (r + eps) * np.cos(theta), (r + eps) * np.sin(theta)
-    ax.plot(Bepx, Bepy, c='blue', linewidth=0.5, label=r'$D+\epsilon$')
+    ax.plot_fill(Bepx, Bepy, c='blue', linewidth=0.5, label=r'$D+\epsilon$')
 
     # Distance function from eps away from body edge
     dis = np.sqrt(X ** 2 + Y ** 2)
@@ -103,10 +103,10 @@ def plot_pressure():
     ax.set_xlim(0, np.pi/2)
     ax.set_ylim(-2, 1)
     ax.legend()
-    plt.savefig('pressure_theta.pdf')
+    plt.savefig('pressure_theta.pdf', transparent=True)
     plt.show()
 
 
 if __name__ == "__main__":
-    plot_BL_corruption()
-    # plot_pressure()
+    # plot_BL_corruption()
+    plot_pressure()

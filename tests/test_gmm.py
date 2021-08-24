@@ -2,7 +2,7 @@ import numpy as np
 import sklearn.mixture
 import torch
 
-from postproc.gmm import GaussianMixture
+from postproc.ml_tools.gmm import GaussianMixture
 
 import unittest
 

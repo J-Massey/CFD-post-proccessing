@@ -8,14 +8,12 @@
 
 # Imports
 import numpy as np
-import postproc.plotter
+import postproc.visualise.plotter
 import postproc.io as io
 import postproc.frequency_spectra
 import matplotlib.pyplot as plt
 import os
-import torch
 import importlib
-from collections import deque
 
 importlib.reload(postproc.frequency_spectra)
 import postproc.frequency_spectra
@@ -52,10 +50,10 @@ n = int(np.floor((np.max(t[t > late]) - np.min(t[t > late])) / cycles))
 criteria = postproc.frequency_spectra.FreqConv(t=t[t > late], u=u[t > late], n=n, OL=0.5)
 labelled_uks_e, fs_e, area = criteria.ensemble()
 
-postproc.plotter.plotLogLogTimeSpectra_list_cascade(data_root + f'figures/ensembling_PSD_{interest}.png',
-                                                    labelled_uks_e, fs_e,
-                                                    title=f"Splits, $n={n}$",
-                                                    ylabel=r'PS ' + label)
+postproc.visualise.plotter.plotLogLogTimeSpectra_list_cascade(data_root + f'figures/ensembling_PSD_{interest}.png',
+                                                              labelled_uks_e, fs_e,
+                                                              title=f"Splits, $n={n}$",
+                                                              ylabel=r'PS ' + label)
 
 
 normed_error, window_t = criteria.f_conv(cycles)
@@ -72,7 +70,7 @@ ax.set_xlabel(r"$torch/length_scale$")
 ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
 # ax.plot(f, uk, length_scale='r')
-ax.plot(window_t, normed_error, c='r')
+ax.plot_fill(window_t, normed_error, c='r')
 plt.savefig(data_root + f"figures/ensemble_error_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
 plt.close()
 

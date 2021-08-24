@@ -7,7 +7,7 @@ colors = sns.color_palette("Paired", n_colors=12).as_hex()
 
 import torch
 
-from postproc.gmm import GaussianMixture
+from postproc.ml_tools.gmm import GaussianMixture
 from math import sqrt
 
 

@@ -9,14 +9,11 @@
 
 # Imports
 import numpy as np
-import postproc.plotter
-import postproc.gmm
+import postproc.visualise.plotter
+import postproc.ml_tools.gmm
 import postproc.frequency_spectra
-from postproc.boundary_layer import ProfileDataset, plot_poincare
-import matplotlib.pyplot as plt
-import os, sys
+from postproc.boundary_layer import ProfileDataset
 import torch
-import itertools
 
 #%%
 
@@ -42,8 +39,8 @@ for idx,case in enumerate(t_comparisons):
     print(f"Test angles: {[round(a, 2) for a in angles]}")
 # %%
 import importlib
-importlib.reload(postproc.plotter)
-import postproc.plotter
+importlib.reload(postproc.visualise.plotter)
+import postproc.visualise.plotter
 #%%
 importlib.reload(postproc.frequency_spectra)
 import postproc.frequency_spectra
@@ -60,7 +57,7 @@ for idx in range(len(xs[0])):
         print("Made dat a Tensor"); print("Running GMM")
         # Next, the Gaussian mixture is instantiated and ..
         n_components = 2
-        model = postproc.gmm.GaussianMixture(n_components, np.shape(data)[1]).cuda()
+        model = postproc.ml_tools.gmm.GaussianMixture(n_components, np.shape(data)[1]).cuda()
         model.fit(data, delta=1e-5, n_iter=1e6)
         print("Gmm fit")
         # .. used to predict the dat points as they where shifted

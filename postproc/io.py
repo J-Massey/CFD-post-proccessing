@@ -286,6 +286,7 @@ def unpackTimeSeries(file, npoints):
     else:
         raise ValueError("Number of points is not <=3")
 
+
 def readTimeSeries(file):
     """
     Reads ASCII files containing the following columns: non-dimensional time, point1, point2, ...
@@ -332,9 +333,11 @@ def read_vti(file):
     return np.transpose(np.array(vec), (0,3,2,1)), np.transpose(sca, (0,3,2,1)), grid3D
 
 
-def read_vtr(fname):
+def read_vtr(fn):
+    import warnings
+    warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
     reader = vtk.vtkXMLPRectilinearGridReader()
-    reader.SetFileName(fname)
+    reader.SetFileName(fn)
     reader.Update()
     data = reader.GetOutput()
     pointData = data.GetPointData()
@@ -342,27 +345,62 @@ def read_vtr(fname):
     ndims = len(sh)
 
     # get vector field
-    v = np.array(pointData.GetVectors("Velocity")).reshape(sh + (ndims,))
-    vec = []
-    for d in range(ndims):
-        a = v[..., d]
-        vec.append(a)
-    vec = np.array(vec)
-    # get scalar field
-    sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
+    try:
+        v = np.array(pointData.GetVectors("Velocity")).reshape(sh + (ndims,))
+        vec = []
+        for d in range(ndims):
+            a = np.array(v[..., d])
+            vec.append(a)
+        vec = np.array(vec)
+        # get scalar field
+        sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
-    # get grid
-    x = np.array(data.GetXCoordinates())
-    y = np.array(data.GetYCoordinates())
-    z = np.array(data.GetZCoordinates())
+        # get grid
+        x = np.array(data.GetXCoordinates())
+        y = np.array(data.GetYCoordinates())
+        z = np.array(data.GetZCoordinates())
 
-    return np.transpose(vec, (0,3,2,1)), np.transpose(sca, (0,3,2,1)), np.array([x, y, z])
+        return np.transpose(vec, (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), np.array((x, y, z))
+    except ValueError:
+        print('\n' + fn + ' corrupt, skipping for now')
 
 
-def pvd_parser(fname, n=None): # 'n' is the number of snapshots set by user to crop the total
+def vtr_to_mesh(fn, length_scale, rotation=0):
+    """
+    Rotates and scales vtr file
+    Args:
+        fn: The path to the 'datp' folder
+        length_scale: length scale of the simulation
+        rotation: Rotate the grid. If you're running a simulation with
+                  an angle of attack, it's better to rotate the flow than
+                  the foil because of the meshing.
+
+    Returns: X, Y - coordinates (useful for indexing)
+             U, V - rotated velocity components
+             w    - un-rotated z velocity component
+             p    - pressure field
+
+    """
+    rot = rotation / 180 * np.pi
+    data = read_vtr(fn)
+    # Get the grid
+    x, y, z = data[2]
+    X, Y = np.meshgrid(x / length_scale, y / length_scale)
+    X = np.cos(rot) * X + np.sin(rot) * Y
+    Y = -np.sin(rot) * X + np.cos(rot) * Y
+
+    u, v, w = data[0]
+    U = np.cos(rot) * u + np.sin(rot) * v
+    V = -np.sin(rot) * u + np.cos(rot) * v
+    p = data[1]
+    p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
+    return X, Y, U, V, w, p
+
+
+def pvd_parser(fn, n=None):
     times = []
     files = []
-    with open(fname) as f:
+    with open(fn) as f:
         lines = f.readlines()
 
     for line in lines[2:-2][:n]:

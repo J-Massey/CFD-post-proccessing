@@ -3,7 +3,6 @@ import seaborn as sns
 import numpy as np
 import os
 from postproc.boundary_layer import ProfileDataset
-from postproc.plotter import loglogLine
 
 colors = sns.color_palette("husl", 4)
 plt.style.use(['science', 'grid'])
@@ -11,17 +10,16 @@ plt.style.use(['science', 'grid'])
 
 def data_loader(d):
     data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/data'
-    names = ['t', 'dt', 'angle', 'px', 'py', 'pz',
-             'vx', 'vy', 'vz', 'v2x', 'v2y', 'v2z', 'vforcex', 'vforcey', 'vforcez']
-    fos = np.loadtxt(os.path.join(data_root, str(d) + '/fort.9'), unpack=True)
+    names = ['t', 'dt', 'angle', 'px', 'py', 'pz']
+    fos = np.loadtxt(os.path.join(data_root, str(d) + '/3D/fort.9'), unpack=True)
     fos = dict(zip(names, fos))
-    dpdx = np.loadtxt(os.path.join(data_root, str(d) + '/fort.10'), unpack=True)
+    dpdx = np.loadtxt(os.path.join(data_root, str(d) + '/3D/fort.10'), unpack=True)
     # self.ang = np.pi / np.shape(dpdx)[1]
     profiles = ProfileDataset(os.path.join(data_root, str(d)),
                               print_res=128, multi=8)
     # u0 = profiles.get_u(0, d, 1)[0]
-    u2 = profiles.get_u(2, d, 1)[0]
-    u_bl = profiles.bl_value(position=0.55, length_scale=d, print_len=1)
+    u2 = np.loadtxt(os.path.join(data_root, str(d) + '/3D/fort.12'), unpack=True)
+    u_bl = np.loadtxt(os.path.join(data_root, str(d) + '/3D/fort.11'), unpack=True)
     # du_1 = ((profiles.get_u(2, d, 1)[0]).T / 2).T
     return dpdx, u2, u_bl
 
@@ -90,7 +88,7 @@ def plot_u_bl(D, ubl):
 
 
 if __name__ == "__main__":
-    Ds = [16, 24, 32, 48, 96]
+    Ds = [16, 24, 32, 48, 64]
     dpdxs, u2s, u_bls = [], [], []
     for d in Ds:
         dpdx, u2, u_bl = data_loader(d)

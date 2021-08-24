@@ -6,20 +6,16 @@
 """
 
 import os
-import postproc.io as io
 import postproc.calc as calc
-import postproc.plotter as plotter
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 import matplotlib.colors as colors
-from matplotlib import ticker, cm
 import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tkinter import Tcl
 import imageio
 from tqdm import tqdm
-from matplotlib.ticker import FormatStrFormatter
 from pygifsicle import optimize
 
 

@@ -50,13 +50,13 @@ def plot_profile():
     # Pull a random profile from the DNS idx[theta, time]
     p = d.profiles.profiles_x[4, 100]
     y = (np.linspace(0, 1, len(p)) - 1 / 2)
-    ax.plot(p, y, label=r'Ground truth')
+    ax.plot_fill(p, y, label=r'Ground truth')
 
     for down in range(2, 8, 2):
         pro = sub_smear_prof(p[::down])
         len_ = len(pro)
         u0, cd = pro[int(len_/2)], pro[int(len_/2+2)] / 2
-        ax.plot(pro, y[::down], label=str(down) + r'$ \Delta x $ ')
+        ax.plot_fill(pro, y[::down], label=str(down) + r'$ \Delta x $ ')
         # ax.scatter(0, u0, c='k', marker='*')
     ax.legend()
     ax.set_ylim(-0.2, 0.4)
@@ -74,9 +74,9 @@ def smooth_pol():
     y = (np.linspace(-.5, 1.5, 128) - 1 / 2)
     ze = np.append(np.zeros(len(y[y < 0])), y[y >= 0])
     u = 2 * ze - 2 * ze ** 3 + ze ** 4
-    ax.plot(u[:-1], y[:-1], label=r'Polhausen profile', color='k', ls='--')
+    ax.plot_fill(u[:-1], y[:-1], label=r'Polhausen profile', color='k', ls='--')
     pro = sub_smear_prof(u[::6])
-    ax.plot(pro[:-1], y[::6][:-1], label=r'Smoothed profile')
+    ax.plot_fill(pro[:-1], y[::6][:-1], label=r'Smoothed profile')
     ax.axvline(ls=':', label='Hard body boundary', c='k')
     ax.legend()
     # ax.set_xlim(-.2, .4)

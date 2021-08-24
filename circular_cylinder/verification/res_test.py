@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 @author: J. Massey
-@description: Res test for flat plate experiment with Melike Kurt
+@description: Res test for flat plate experiment with analysis Kurt
 @contact: jmom1n15@soton.ac.uk
 """
 
 # Imports
-import numpy as np
-import postproc.plotter
+import postproc.visualise.plotter
 import postproc.io as io
 import postproc.frequency_spectra
 import matplotlib.pyplot as plt
@@ -48,15 +47,15 @@ for idx, fn in tqdm(enumerate(D), desc='File loop'):
     criteria = postproc.frequency_spectra.FreqConv(t, u, n=3, OL=0.5)
     f, uk = criteria.welch()
     fs.append(f); uks.append((r'$ length_scale = $' + str(D[idx]), uk))
-    ax1.plot(t, u, label=r'$ length_scale = $' + str(D[idx]))
+    ax1.plot_fill(t, u, label=r'$ length_scale = $' + str(D[idx]))
 
 ax1.legend()
 fig1.savefig(data_root + f"figures/TS_{interest}.png", bbox_inches='tight', dpi=600, transparent=False)
 plt.close()
 
-postproc.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{interest}.png',
-                                                    uks, fs,
-                                                    title=r'$\epsilon = 0.5$',
-                                                    ylabel=r'$PS$ ' + label)
+postproc.visualise.plotter.plotLogLogTimeSpectra_list(data_root + f'figures/log_spectra_{interest}.png',
+                                                      uks, fs,
+                                                      title=r'$\epsilon = 0.5$',
+                                                      ylabel=r'$PS$ ' + label)
 
 
