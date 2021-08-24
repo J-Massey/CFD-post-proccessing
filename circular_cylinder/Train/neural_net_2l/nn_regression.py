@@ -31,7 +31,7 @@ class CfData(torch.utils.data.Dataset):
 class LinearRegression(torch.nn.Module):
     def __init__(self, input_size: int):
         super(LinearRegression, self).__init__()
-        self.hid1 = torch.nn.Linear(input_size, 10)  # 8-(10-10)-1
+        self.hid1 = torch.nn.Linear(input_size, 10)
         self.hid2 = torch.nn.Linear(10, 10)
         self.oupt = torch.nn.Linear(10, 1)
 
@@ -43,8 +43,8 @@ class LinearRegression(torch.nn.Module):
         torch.nn.init.zeros_(self.oupt.bias)
 
     def forward(self, x):
-        z = torch.tanh(self.hid1(x))
-        z = torch.tanh(self.hid2(z))
+        z = torch.sigmoid(self.hid1(x))
+        z = torch.sigmoid(self.hid2(z))
         z = self.oupt(z)  # could use sigmoid() here
         return z
 
@@ -58,7 +58,7 @@ def accuracy(model, X, Y):
     return oupt
 
 
-def compare_data(model, device="cuda", angles=32, fn='model.pdf'):
+def compare_data(model, device="cuda", fn='model.pdf'):
     # Get mean quantities
     with open('fos.pickle', "rb") as f:
         fos = cPickle.load(f)
@@ -84,7 +84,7 @@ def compare_model(model, device="cuda", angles=32, fn='model.pdf'):
 
     chunk = angles * len(fos['t'])
 
-    p_data = np.load('data.npy').astype(np.float32)
+    p_data = np.load('../data.npy').astype(np.float32)
     gt = p_data[0:chunk, -1]
 
     with torch.no_grad():
@@ -109,18 +109,19 @@ def main(wd):
     np.random.seed(1)
 
     # 1. Split data and DataLoader objects
-    data = np.load('data.npy').astype(np.float32)
+    data = np.load('../data.npy').astype(np.float32)
 
+    poly_n = 10
     x_train, x_test, y_train, y_test = \
         train_test_split(data[:, 0:-1], data[:, -1],
-                         test_size=0.2, shuffle=False)
+                         test_size=0.2, shuffle=True)
     print("Create data generator ")
-    ds_train = CfData(x_train, y_train)  # all 200 rows
+    ds_train = CfData(x_train, y_train)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu:0")
 
-    params = {'batch_size': int(8192),
+    params = {'batch_size': int(512),
               'shuffle': True,
               'num_workers': 16,
               'pin_memory': True}
@@ -136,10 +137,9 @@ def main(wd):
     model.to(device)
 
     # 3. train model
-    max_epochs = 1
-    ep_log_interval = 10
-    lrn_rate = 0.0001
-    wd = wd
+    max_epochs = 20
+    ep_log_interval = 5
+    lrn_rate = 0.01
 
     loss_func = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lrn_rate, weight_decay=wd)
@@ -151,9 +151,10 @@ def main(wd):
     print("lrn_rate = %0.3f " % lrn_rate)
 
     print("\nStarting training")
-    'models/nn_regression.pth'
+
     try:
         model.load_state_dict(torch.load('models/'+str(wd) + '_nn_regression.pth'))
+        print('Continuing model')
     except FileNotFoundError:
         print('No model saved, starting from scratch')
     except RuntimeError:
@@ -200,19 +201,23 @@ def main(wd):
 
     # 5. save model (state_dict approach)
     print("\nSaving trained model state")
-    torch.save(model.state_dict(), 'models/'+str(wd) + '_nn_regression.pth')
+    if torch.cuda.device_count() > 1:
+        useable_model = model.module
+        torch.save(useable_model.state_dict(), 'models/'+str(wd) + '_nn_regression.pth')
+    else:
+        torch.save(model.state_dict(), 'models/' + str(wd) + '_nn_regression.pth')
 
     # 6. Test accuracy on test data and plot results
-    print("\nCompare model to original data")
-
-    compare_model(model, fn='figures/model_gt_wd_'+str(wd)+'.pdf')
-    compare_data(model, fn='figures/model_data_wd_' + str(wd) + '.pdf')
+    # print("\nCompare model to original data")
+    #
+    # compare_model(model, poly_n, fn='figures/model_gt_wd_'+str(wd)+'.pdf')
+    # compare_data(model, poly_n, fn='figures/model_data_wd_' + str(wd) + '.pdf')
     print("\nBetter?")
 
 
 if __name__ == "__main__":
     main(0.0)
-    for w in [-4]:
-        main(10**w)
+    # for w in [-4, -3]:
+    #     main(10**w)
 
 

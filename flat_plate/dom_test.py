@@ -9,12 +9,10 @@
 # Imports
 # Imports
 import numpy as np
-import postproc.plotter
+import postproc.visualise.plotter
 import postproc.io as io
 import postproc.frequency_spectra
-import matplotlib.pyplot as plt
 import os
-import torch
 import importlib
 import seaborn as sns
 
@@ -34,8 +32,8 @@ labels = [r'$ length_scale(8, 8, 0.25) $', r'$ length_scale(8, 12, 0.25) $', r'$
 labels = [r'$ length_scale(8, 8, 0.25) $', r'$ length_scale(16, 8, 0.25) $', r'$ length_scale(16, 16, 0.25) $', r'$ length_scale(32,32, 0.25) $']
 
 
-importlib.reload(postproc.plotter)
-import postproc.plotter
+importlib.reload(postproc.visualise.plotter)
+import postproc.visualise.plotter
 
 from collections import deque
 
@@ -63,6 +61,6 @@ for idx, fn in enumerate(files):
 #                                   fn=vtr_file + 'figures/summary_dom_means_py.svg', doms=labels[:len(files)])
 fs = list(fs)
 uks = list(uks)
-postproc.plotter.plotLogLogTimeSpectra_list_cascade(data_root + 'figures/summary_dom_test.svg', uks, fs,
-                                                    ylabel=r'$\mathrm{PS}\left(C_{L_{p}}\right)$')
+postproc.visualise.plotter.plotLogLogTimeSpectra_list_cascade(data_root + 'figures/summary_dom_test.svg', uks, fs,
+                                                              ylabel=r'$\mathrm{PS}\left(C_{L_{p}}\right)$')
 

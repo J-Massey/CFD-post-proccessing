@@ -8,11 +8,8 @@
 # Imports
 import postproc.io as io
 import postproc.calc as averages
-import postproc.plotter as plotter
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy import ma
-from matplotlib import ticker, cm
 import seaborn as sns
 
 plt.style.use(['science', 'grid'])

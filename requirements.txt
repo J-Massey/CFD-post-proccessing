@@ -14,3 +14,4 @@ future~=0.18.2
 h5py~=3.2.1
 sklearn~=0.0
 pygifsicle~=1.0.4
+pydmd~=0.3.3

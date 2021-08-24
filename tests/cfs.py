@@ -8,11 +8,7 @@
 """
 
 # Imports
-import numpy as np
-import postproc
-from postproc import cylinder_forces as cf
 from postproc import io
-from postproc import plotter
 
 D = 32 # Diameter (Characteristic length)
 U = 1  # Characteristic velocity

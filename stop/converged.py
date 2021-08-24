@@ -9,7 +9,7 @@
 import numpy as np
 import postproc.io as io
 import postproc.frequency_spectra
-import postproc.plotter
+import postproc.visualise.plotter
 import subprocess
 import sys
 from pathlib import Path
@@ -39,7 +39,7 @@ def _plot_ts(ti, f):
     ax1.set_xlabel(r"$torch/length_scale$")
     ax1.set_ylabel(f"${sys.argv[2]}$")
 
-    ax1.plot(t, u, c='r')
+    ax1.plot_fill(t, u, c='r')
     plt.savefig(Path.cwd().joinpath(f"figures/time_series_{sys.argv[2]}.png"), bbox_inches='tight', dpi=600,
                 transparent=False)
     plt.close()
@@ -63,7 +63,7 @@ def _plot_err(ti, e):
     ax.set_xlabel(r"$torch/length_scale$")
     ax.set_ylabel(r"$\int \sqrt(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2 df/ \int \overline{s_{0,n+1}}$")
 
-    ax.plot(ti, e, c='r')
+    ax.plot_fill(ti, e, c='r')
     plt.savefig(Path.cwd().joinpath(f"figures/ensemble_error_{sys.argv[2]}.png"), bbox_inches='tight', dpi=600,
                 transparent=False)
     plt.close()

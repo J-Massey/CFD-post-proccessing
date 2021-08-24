@@ -63,7 +63,7 @@ for idx, loop in tqdm(enumerate(instant_tke), ascii=True, desc='Calculate spectr
     ax.set_xlabel(r"$torch/length_scale$")
     ax.set_ylabel(r'$\int \sqrt{(\overline{s_{0,n}} - \overline{s_{0,n+1}})^2} df/ \int \overline{s_{0,n+1}}$')
 
-    ax.plot(window_t, normed_error, c='r')
+    ax.plot_fill(window_t, normed_error, c='r')
     plt.savefig(data_root + f"figures/{interest}_converged_{idx}.png", bbox_inches='tight', dpi=600,
                 transparent=False)
     plt.close()

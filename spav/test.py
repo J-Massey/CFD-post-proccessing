@@ -8,20 +8,9 @@
 # Imports
 import os
 import postproc.io as io
-import postproc.calc as averages
-import postproc.plotter as plotter
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import numpy as np
-import matplotlib.colors as colors
-from matplotlib import ticker, cm
-import seaborn as sns
-import torch
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tkinter import Tcl
-import imageio
-import tqdm
-import h5py
 
 
 def plot_2D_fp_isocontours(data, interest, fn_save, **kwargs):

@@ -20,3 +20,5 @@
 *.9
 *.10
 /venv/*
+/flat_plate/
+/circular_cylinder/

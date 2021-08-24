@@ -7,8 +7,6 @@
 """
 
 # Imports
-import numpy as np
-import postproc.plotter
 import postproc.io
 import postproc.frequency_spectra
 from postproc.boundary_layer import ProfileDataset
@@ -69,7 +67,7 @@ for idx, fn in tqdm(enumerate(files), desc='File loop', ascii=True):
 
     # Get the O(1) F-length_scale
     cd, cl = data.fd_1(length_scale=D[idx], print_res=res, print_len=3)
-    ax1.plot(t, cd[2], color=colors[idx], label=f"length_scale = ${D[idx]}$")
+    ax1.plot_fill(t, cd[2], color=colors[idx], label=f"length_scale = ${D[idx]}$")
 
     for idx1, (loop1, loop2) in tqdm(enumerate(zip(cd, cl)), desc='Loooop', ascii=True):
         # Restructure so that the angles can be directly compared at different resolutions

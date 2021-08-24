@@ -9,16 +9,13 @@
 
 # Imports
 import numpy as np
-import postproc
-from postproc import cylinder_forces as cf
-from postproc import io,plotter,gmm,frequency_spectra
-from postproc.boundary_layer import ProfileDataset, plot_poincare
-import matplotlib
+from postproc import frequency_spectra
+from postproc.visualise import plotter
+from postproc.ml_tools import gmm
+from postproc.boundary_layer import ProfileDataset
 # matplotlib.use('svg')
 import matplotlib.pyplot as plt
-import os, sys
 import torch
-import itertools
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -75,9 +72,9 @@ def main():
                 pow_spec=frequency_spectra.freq_spectra_Welch(t[:int(loop*len(t)/5)],likelihood[:int(loop*len(t)/5)])
 
                 plotter.simple_plot(*pow_spec,
-                            y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/length_scale $", colour=colours[loop-1],
-                            colours=colours[:len(xs)], title=f"$ {round(angles[idx], 2)}^r $ from the front",
-                            file=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
+                                    y_label=r"$ \ln[\mathcal{L}(\mu_k|x_k)] $", x_label=r"$ f/length_scale $", colour=colours[loop-1],
+                                    colours=colours[:len(xs)], title=f"$ {round(angles[idx], 2)}^r $ from the front",
+                                    file=data_root_t+f"figures/pow_spec_welch_{idx}.svg")
 
             plt.close()
 

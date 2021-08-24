@@ -24,7 +24,7 @@ print(device)
 def plot1(x, y, label_x, label_y, title=None, legend=None, save=None):
     fig, ax = plt.subplots(figsize=(7, 5))
     for i in enumerate(x):
-        ax.plot(x[i[0]], y[i[0]], 'r')
+        ax.plot_fill(x[i[0]], y[i[0]], 'r')
     ax.set_xlabel(label_x, fontsize=16)
     ax.set_ylabel(label_y, fontsize=16)
     if title != None: ax.set_title(title)
@@ -41,9 +41,9 @@ fos = dict(zip(names, fos))
 p = np.loadtxt(os.path.join(data_root, 'd-96/3D/fort.10'), unpack=True)
 ang = np.pi / np.shape(p)[1]
 profiles = postproc.boundary_layer.ProfileDataset(os.path.join(data_root, 'd-96/3D'))
-u0, v0 = profiles.get_u(0, 96, 2, 256)
+u0, v0 = profiles.get_s(0, 96, 2, 256)
 # Find 1st order fd at eps away from the boundary (is this good enough to be the answer?) show verification
-u2, v2 = profiles.get_u(2, 96, 2, 256)
+u2, v2 = profiles.get_s(2, 96, 2, 256)
 cd, cl = u2 / 2, v2 / 2
 my_data = np.stack((p, u0, cd))
 p = torch.tensor(p, device=device)
@@ -126,8 +126,8 @@ ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', 
 ax.set_xlabel(r"$t/c$")
 ax.set_ylabel(r'$C_{D_f}$')
 # ax.plot(fos['t'], -fos['vforcex'], label=r'$U^{\prime}$')
-ax.plot(fos['t'], fos['vx'], label=r'$O(1)$ FD')
-ax.plot(fos['t'], fos['v2x'], label=r'$O(2)$ FD')
+ax.plot_fill(fos['t'], fos['vx'], label=r'$O(1)$ FD')
+ax.plot_fill(fos['t'], fos['v2x'], label=r'$O(2)$ FD')
 ax.legend()
 plt.savefig('test.pdf')
 plt.show()

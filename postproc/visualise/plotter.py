@@ -810,7 +810,7 @@ def two_point_correlations_single(a, fname):
                 case_name = '\pi'
                 max_d = np.max(d)
             ax.plot(d, c, color=colors[j], lw=1.5, label='$' + case_name + '$', marker=markers[j], markevery=0.05,
-                    markersize=4)
+                         markersize=4)
 
     leg1 = ax.legend(loc='lower left')
     leg1.get_frame().set_edgecolor('black')
@@ -914,7 +914,7 @@ def two_point_correlations_3_horizontal(a, fname):
                 max_d = np.max(d)
             every = [4, 2, 2, 1, 1]
             ax[i].plot(d, c, color=colors[j], lw=1.5, label='$' + case_name + '$', marker=markers[j], markevery=0.05,
-                       markersize=4)
+                            markersize=4)
 
     leg1 = ax1.legend(loc='upper right')
     leg1.get_frame().set_edgecolor('black')
@@ -968,7 +968,7 @@ def two_point_correlations_3_vertical(a, fname):
                 max_d = np.max(d)
             every = [4, 2, 2, 1, 1]
             ax[i].plot(d, c, color=colors[j], lw=1.5, label='$' + case_name + '$', marker=markers[j], markevery=0.05,
-                       markersize=4)
+                            markersize=4)
 
     leg1 = ax1.legend(loc='upper right')
     leg1.get_frame().set_edgecolor('black')
@@ -2005,7 +2005,7 @@ def plotLogLogTimeSpectra(freqs, uk, file):
     return
 
 
-def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None):
+def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, **kwargs):
     """
 	Generate a loglog plot of a list of time spectra series
 	:param file: output fn name
@@ -2014,6 +2014,11 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
 	:param freqs_list: list containing the frequencies [1D numpy array] for each case
 	:return: -
 	"""
+    title = kwargs.get('title', None)
+    xlim = kwargs.get('xlim', None)
+    ylim = kwargs.get('ylim', None)
+    ylabel = kwargs.get('ylabel', None)
+    xlabel = kwargs.get('xlabel', None)
     plt.style.use(['science', 'grid'])
     fig, ax = plt.subplots(figsize=(7, 5))
     # Show lines
@@ -2026,7 +2031,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
         uk = uk_tuple[1]
         label = '$' + label + '$'
         color = colors[i]
-        ax.plot(freqs_list[i], uk, color=color, lw=0.5, label=label)
+        ax.bar(freqs_list[i], uk, color=color, lw=0.5, label=label)
 
     # Set limits
     # ax.set_xlim(np.min(freqs_list[0]), 2e-1)
@@ -2039,8 +2044,8 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
     ax.tick_params(bottom="on", top="on", which='both')
 
     # Edit frame, labels and legend
-    plt.xlabel(r'$f/Uc$')
-    plt.ylabel(r'$SPS$')
+    if xlabel is not None: plt.xlabel(xlabel)
+    if ylabel is not None: plt.ylabel(ylabel)
     leg = plt.legend(loc='upper right')
     leg.get_frame().set_edgecolor('white')
 
@@ -2058,7 +2063,7 @@ def plotTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None,
     return
 
 
-def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim=None, ylim=None, ylabel=None):
+def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list,  **kwargs):
     """
 	Generate a loglog plot of a list of time spectra series
 	:param file: output fn name
@@ -2067,9 +2072,15 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
 	:param freqs_list: list containing the frequencies [1D numpy array] for each case
 	:return: -
 	"""
+    title = kwargs.get('title', None)
+    xlim = kwargs.get('xlim', None)
+    ylim = kwargs.get('ylim', None)
+    ylabel = kwargs.get('ylabel', None)
+    xlabel = kwargs.get('xlabel', None)
+    colors = kwargs.get('colors', sns.color_palette("husl", len(uk_tuple_list)))
+
     plt.style.use(['science', 'grid'])
-    fig, ax = plt.subplots(figsize=(7, 5))
-    colors = sns.color_palette("husl", len(uk_tuple_list))
+    fig, ax = plt.subplots(figsize=(6, 4))
 
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
@@ -2100,9 +2111,9 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
     ax.tick_params(bottom="on", top="on", which='both')
 
     # Edit frame, labels and legend
-    plt.xlabel(r'$f/UD$')
+    if xlabel is not None: plt.xlabel(xlabel)
     if ylabel is not None: plt.ylabel(ylabel)
-    leg = plt.legend(loc='lower left')
+    leg = plt.legend(loc='upper right')
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
@@ -2115,7 +2126,8 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list, title=None, xlim
 
     # Show plot and save figure
     # plt.show()
-    plt.savefig(file, transparent=False, bbox_inches='tight', dpi=600)
+    ax.axvline(22, c='k', ls='--')
+    plt.savefig(file, bbox_inches='tight', transparent=True, dpi=300)
     return
 
 

@@ -10,10 +10,10 @@ def plot_loss(epochs, cost, fn='cost.pdf'):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     ax.set_xlabel(r"Epochs")
     ax.set_ylabel(r'$L_2$ loss')
-    ax.plot(np.linspace(0, epochs, len(cost)), cost, label=r'$L_{2}$')
+    ax.plot_fill(np.linspace(0, epochs, len(cost)), cost, label=r'$L_{2}$')
     ax.legend()
     plt.savefig(fn)
-    plt.show()
+    plt.close()
 
 
 def plot_model(cd_hat, fos, Y, fn='model.pdf'):
@@ -21,8 +21,8 @@ def plot_model(cd_hat, fos, Y, fn='model.pdf'):
     ax.tick_params(bottom="on", top="on", right="on", which='both', direction='in', length=2)
     ax.set_xlabel(r"$t/D$")
     ax.set_ylabel(r'$C_F$')
-    ax.plot(fos['t'], Y*0.0010518, label=r'Ground truth', color='k')
-    ax.plot(fos['t'], cd_hat*0.0010518, label=r'$\hat{Y}$', color=colours[2])
+    ax.plot_fill(fos['t'], Y * 0.0010518, label=r'Ground truth', color='k')
+    ax.plot_fill(fos['t'], cd_hat * 0.0010518, label=r'$\hat{Y}$', color=colours[2])
     ax.legend()
     plt.savefig(fn)
-    plt.show()
+    plt.close()
