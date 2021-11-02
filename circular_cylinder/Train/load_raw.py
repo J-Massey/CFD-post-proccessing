@@ -120,10 +120,10 @@ def main():
     data_root = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/data'
     da = LoadData(data_root)
     fos = da.fos
-    conv = da.data()
-    with open(r"fos.pickle", "wb") as output_file:
+    # conv = da.data()
+    with open(r"neural_net_2l/fos.pickle", "wb") as output_file:
         cPickle.dump(fos, output_file)
-    np.save('data.npy', conv)
+    # np.save('data.npy', conv)
 
 
 if __name__ == "__main__":

@@ -137,7 +137,7 @@ def main(wd):
     model.to(device)
 
     # 3. train model
-    max_epochs = 20
+    max_epochs = 2
     ep_log_interval = 5
     lrn_rate = 0.01
 
@@ -210,7 +210,7 @@ def main(wd):
     # 6. Test accuracy on test data and plot results
     # print("\nCompare model to original data")
     #
-    # compare_model(model, poly_n, fn='figures/model_gt_wd_'+str(wd)+'.pdf')
+    compare_model(model, fn='figures/model_gt_wd_'+str(wd)+'.png')
     # compare_data(model, poly_n, fn='figures/model_data_wd_' + str(wd) + '.pdf')
     print("\nBetter?")
 

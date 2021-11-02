@@ -2076,11 +2076,11 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list,  **kwargs):
     xlim = kwargs.get('xlim', None)
     ylim = kwargs.get('ylim', None)
     ylabel = kwargs.get('ylabel', None)
-    xlabel = kwargs.get('xlabel', None)
+    xlabel = kwargs.get('xlabel', r'$f^{\star}$')
     colors = kwargs.get('colors', sns.color_palette("husl", len(uk_tuple_list)))
 
     plt.style.use(['science', 'grid'])
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(7, 5))
 
     # Show lines
     for i, uk_tuple in enumerate(uk_tuple_list):
@@ -2113,7 +2113,7 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list,  **kwargs):
     # Edit frame, labels and legend
     if xlabel is not None: plt.xlabel(xlabel)
     if ylabel is not None: plt.ylabel(ylabel)
-    leg = plt.legend(loc='upper right')
+    leg = plt.legend(loc='lower left')
     leg.get_frame().set_edgecolor('white')
 
     # Anotations
@@ -2126,7 +2126,7 @@ def plotLogLogTimeSpectra_list(file, uk_tuple_list, freqs_list,  **kwargs):
 
     # Show plot and save figure
     # plt.show()
-    ax.axvline(22, c='k', ls='--')
+    # ax.axvline(22, c='k', ls='--')
     plt.savefig(file, bbox_inches='tight', transparent=True, dpi=300)
     return
 

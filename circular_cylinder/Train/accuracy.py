@@ -27,7 +27,7 @@ real_data_dir = '/home/masseyjmo/Workspace/Lotus/projects/cylinder_dns/data'
 
 def get_gt(angles=32):
     # Get mean quantities
-    with open('fos.pickle', "rb") as f:
+    with open('neural_net_2l/fos.pickle', "rb") as f:
         fos = cPickle.load(f)
     fos['t'] = fos['t'][fos['t'] > 190]
     chunk = angles * len(fos['t'])
@@ -226,6 +226,7 @@ def plot_best_model_error(Ds):
         real_test_data = poly_feat.fit_transform(real_test_data)
         lr = clean.predict(real_test_data)
 
+
         mean_error, var_error = abs(np.mean(lr) - gt_mean) / gt_mean, abs(np.var(lr) - gt_var) / gt_var
         colours = sns.color_palette("BuGn_r", 7)
         ax_m.scatter(128 / d, mean_error, color=colours[3],
@@ -301,5 +302,6 @@ if __name__ == "__main__":
 
     # plot_nn_model_error(ds)
     plot_best_model_error(ds)
+    # np.shape(np.load('data.npy'))
 
 

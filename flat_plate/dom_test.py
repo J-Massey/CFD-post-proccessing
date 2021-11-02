@@ -51,7 +51,7 @@ for idx, fn in enumerate(files):
     # area = np.trapz(uk, f)
     # uk = uk / area
     fs.append(f); uks.append((labels[idx], uk))
-    # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ torch $", y_label=r"$ C_{L_{p}} $",
+    # postproc.plotter.fully_defined_plot(f, np.log(uk), x_label=r"$ t $", y_label=r"$ C_{L_{p}} $",
     #                                     fn=vtr_file + f'figures/CLp-torch.svg',
     #                                     colour=colours[idx])  # , colours=colours[:len(files)], l_label=labels[:len(files)])
 

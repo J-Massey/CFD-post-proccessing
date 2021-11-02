@@ -27,7 +27,7 @@ class PIVFramework:
         l, U_inf = data['chord_length'], data['U_inf']
         print(l)
         self.X, self.Y = data['X'] / l, data['Y'] / l
-        self.u, self.v = data['VY'] / U_inf, data['VX'] / U_inf
+        self.u, self.v = data['VY'] / 0.08, data['VX'] / 0.08
         if mag:
             self.mag_snap = np.sqrt((np.einsum('...jk,...jk->...jk', self.u, self.u) +
                                      np.einsum('...jk,...jk->...jk', self.v, self.v)))
@@ -46,5 +46,5 @@ class PIVFramework:
                 omega.append(np.array(calc.vortZ(snap_u, snap_v, x=self.X[:, 0], y=self.Y[0], acc=2)))
             self.omega = np.sum(omega, axis=0) / len(self.U)
             self.omega = self.omega.T
-            self.omega = data['vort'] / U_inf
+            self.omega = data['vort'] / 0.08
             self.omega = np.squeeze(np.mean(self.omega, axis=0)).T

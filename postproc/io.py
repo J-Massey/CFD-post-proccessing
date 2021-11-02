@@ -11,6 +11,7 @@ import vtk
 import pickle
 from postproc.calc import make_periodic
 
+
 # Functions
 def read_data(file, shape, **kwargs):
     """
@@ -365,7 +366,7 @@ def read_vtr(fn):
         print('\n' + fn + ' corrupt, skipping for now')
 
 
-def vtr_to_mesh(fn, length_scale, rotation=0):
+def rotate_2D_flow_field(fn, length_scale, rotation=0):
     """
     Rotates and scales vtr file
     Args:

@@ -33,14 +33,16 @@ class LrModel:
 
     def straight_linear(self):
         lr = LinearRegression(n_jobs=16, fit_intercept=False)
-        lr.fit(self.X_train, self.y_train)
+        reg = lr.fit(self.X_train, self.y_train)
+
+        print('coeff', reg.coef_, 'inter', reg.intercept_)
 
         # evaluating the model on training and testing sets
         pred_train_lr = lr.predict(self.X_train)
-        print('Lr train', r2_score(self.y_train, pred_train_lr))
+        # print('Lr train', r2_score(self.y_train, pred_train_lr))
         pred_test_lr = lr.predict(self.X_test)
-        print('Lr test', r2_score(self.y_test, pred_test_lr))
-        return lr
+        # print('Lr test', r2_score(self.y_test, pred_test_lr))
+        return reg
 
     def ridge(self, alpha):
         # here we define a Ridge regression model with lambda(alpha)=0.01

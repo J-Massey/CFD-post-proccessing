@@ -20,7 +20,7 @@ def animate(folder, interest, **kwargs):
     fn_images = os.listdir(folder+'/animation')
     fn_images = Tcl().call('lsort', '-dict', fn_images)
     # Create gif
-    gif_path = os.path.join(folder, interest + '.gif')
+    gif_path = os.path.join(folder, interest + '_high.gif')
     with imageio.get_writer(gif_path, mode='I', duration=duration,  **kwargs) as writer:
         for filename in tqdm(fn_images[::1], desc='Loop images'):
             writer.append_data(imageio.imread(os.path.join(folder, 'animation', filename)))
@@ -37,7 +37,7 @@ def save_piv_frames(data, folder, interest, tit=None):
 def save_sim_frames(data, folder, interest, **kwargs):
     os.system('mkdir -p '+os.path.join(folder, 'animation'))
     os.system('rm '+os.path.join(folder, 'animation')+'/*.png')
-    for idx, snap in tqdm(enumerate(data.snaps), desc='Plotting snapshots'):
+    for idx, snap in tqdm(enumerate(data.snaps[::kwargs.get('down', 1)]), desc='Plotting snapshots'):
         Plot2DIsocontours(snap, interest, **kwargs) \
             .plot_fill(os.path.join(folder, 'animation', str(idx) + '.png'))
 

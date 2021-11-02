@@ -37,7 +37,7 @@ class SimFramework:
             # Store snapshots of field
             self.snaps = []
             for fn in fns[::down]:
-                snap = io.vtr_to_mesh(os.path.join(datp_dir, fn), self.length_scale, rotation=rot)
+                snap = io.rotate_2D_flow_field(os.path.join(datp_dir, fn), self.length_scale, rotation=rot)
                 self.snaps.append(snap)
             del snap
             # Time average the flow field snaps
@@ -49,8 +49,8 @@ class SimFramework:
             del mean_t
         else:
             assert (len(fns) > 0), 'You dont have ' + fn_root + '.pvtr in your datp folder'
-            self.X, self.Y, self.U, self.V, self.W, self.p = io.vtr_to_mesh(os.path.join(datp_dir, fns[0]),
-                                                                            self.length_scale, rotation=rot)
+            self.X, self.Y, self.U, self.V, self.W, self.p = io.rotate_2D_flow_field(os.path.join(datp_dir, fns[0]),
+                                                                                     self.length_scale, rotation=rot)
             self.U, self.V = np.squeeze(self.U), np.squeeze(self.V)
             self.p = np.squeeze(self.p)
         self.z = np.ones(np.shape(self.X))
