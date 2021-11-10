@@ -8,6 +8,7 @@
 import os
 from tkinter import Tcl
 import numpy as np
+import postproc.io as io
 
 
 class LoadSnaps:
@@ -41,6 +42,40 @@ class LoadSnaps:
         except FileNotFoundError:
             print('\nNo saved .npy file, the analysis will be quicker if you save it first')
 
+    @property
+    def average_flow(self):
+        if self.case.endswith('vti'):
+            snap = io.read_vti(os.path.join(self.data_root, 'datp', self.case))
+        elif self.case.endswith('vtr'):
+            snap = io.read_vtr(os.path.join(self.data_root, 'datp', self.case))
+        else:
+            print('\nYou need to add a file extension')
+            raise FileNotFoundError
+
+        return self._unpack_read_vt_2D(snap)
+
+    def _unpack_read_vt_2D(self, snap):
+        """
+        Unpacks the values from
+        Args:
+            snap: the call from io.read_vtr/i
+
+        Returns: X, Y - coordinates (useful for indexing)
+                 U, V - rotated velocity components
+                 w    - z velocity component
+                 p    - pressure field
+
+        """
+        # Get the grid
+        x, y, z = snap[2]
+        # X, Y = np.meshgrid(x / self.length_scale, y / self.length_scale)
+
+        u, v, w = snap[0]
+        p = snap[1]
+        p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
+        return np.squeeze(x), np.squeeze(y), np.squeeze(u), np.squeeze(v), np.squeeze(w),\
+            np.squeeze(p)
+
     def npy_exist(self):
         fns = os.listdir(self.data_root)
         numpy_saves = [fn for fn in fns if fn.startswith(self.case) and fn.endswith('.npy')]
@@ -57,10 +92,6 @@ class LoadSnaps:
 
 
 if __name__ == '__main__':
-    sim_dir = '/home/masseyjmo/Workspace/Lotus/projects/waving_plate'
-    case = ['full_bumps', 'smooth']
-    extension = 'quick_access_data'
-    for loop in case:
-        d_root = os.path.join(sim_dir, extension, loop)
-        snaps = LoadSnaps(d_root, 256, 'flu2d').snapshots
+    sim_dir = '/home/masseyjmo/Workspace/Lotus/projects/flat_plate/AoA_12/smooth/dom_test/5'
+    snaps = LoadSnaps(sim_dir, 192, 'spTAv.1.pvti').average_flow
 

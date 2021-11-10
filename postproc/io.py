@@ -331,7 +331,7 @@ def read_vti(file):
     (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
     grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
 
-    return np.transpose(np.array(vec), (0,3,2,1)), np.transpose(sca, (0,3,2,1)), grid3D
+    return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), grid3D
 
 
 def read_vtr(fn):

@@ -88,7 +88,7 @@ class FreqConv:
     This is a class that holds functions to determine the convergence of a time series using the ensembled freq
     spectra.
     """
-    def __init__(self, t, u, n=6, OL=0.5):
+    def __init__(self, t, u, n=4, OL=0.5):
         self.t = t
         self.u = u
         self.n = n
